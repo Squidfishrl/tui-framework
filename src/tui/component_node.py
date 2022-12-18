@@ -1,7 +1,6 @@
 """Node definition creating a DOM-like structure"""
 
-from _node_list import NodeList
-from component import Component
+import tui._node_list as nl
 
 
 class CMNode:
@@ -14,7 +13,7 @@ class CMNode:
     ) -> None:
         self._id = identifier
         self._name = name
-        self.children: NodeList[Component] = NodeList()
+        self.children: nl._node_list.NodeList = nl.NodeList()
 
     def get_id(self) -> str | None:
         """Get the id of the node"""

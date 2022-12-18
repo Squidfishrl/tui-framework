@@ -1,7 +1,7 @@
 """App handles other modules and prints the application to the terminal"""
 
-from terminal import Terminal
-from area import Area
+from tui.terminal import Terminal
+from tui.area import Area
 
 
 class App():

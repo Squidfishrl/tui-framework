@@ -2,7 +2,7 @@
 
 from _collections_abc import Sequence
 
-from component import Component
+from tui.component import Component
 
 
 class NodeList(Sequence):
@@ -40,20 +40,28 @@ class NodeList(Sequence):
 
     def append(self, component: Component) -> None:
         """Add component at the end of the list"""
-        if isinstance(component, Component):
+        if not isinstance(component, Component):
             raise TypeError
+
+        if component in self._nodes_list:
+            raise ValueError("Component exists already")
+
+        if component.get_id() in self._nodes_dict:
+            raise KeyError
 
         self._nodes_list.append(component)
 
         if component.get_id() is not None:
             self._nodes_dict[component.get_id()] = component
 
-    def pop(self, index: int) -> None:
+    def pop(self, index: int) -> Component:
         """Remove component (search by id)"""
         component = self._nodes_list.pop(index)
 
         if component.get_id() is not None:
             self._nodes_dict.pop(component.get_id())
+
+        return component
 
     def remove(self, component: Component) -> None:
         """Remove component"""

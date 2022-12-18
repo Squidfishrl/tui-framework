@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from component_node import CMNode
+from tui.component_node import CMNode
 
 
 class Component(CMNode):
