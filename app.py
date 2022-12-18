@@ -1,28 +1,24 @@
 """App handles other modules and prints the application to the terminal"""
 
 from terminal import Terminal
+from area import Area
 
 
 class App():
-    """Contains everything necessary for running the application.
-
-    __terminal - Terminal:
-        The instance of the terminal the app is being ran in.
-    __stdout_buffer - list[list[str]]:
-        A 2D array of chars - __stdout_buffer[row][column].
-        Size is equal to terminal resolution.
-    """
+    """Contains everything necessary for running the application."""
     def __init__(self) -> None:
+        # Instance of the terminal the app is being ran in
         self.__terminal: Terminal = Terminal()
-        self.__stdout_buffer: list[list[str]] = [
-                [' ' for _ in range(self.__terminal.columns)]
-                for _ in range(self.__terminal.rows)
-        ]
+        # 2D array of chars representing terminal resolution
+        self.__area: Area = Area(
+                rows=self.__terminal.rows,
+                columns=self.__terminal.columns
+        )
 
-    def run(self):
+    def run(self) -> None:
         """Start and constantly update the app."""
         while True:
-            print(self.__stdout_buffer)
+            print(self.__area.char_area)
 
 
 def main():
