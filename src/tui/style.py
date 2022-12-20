@@ -1,6 +1,6 @@
 """Used to craete style for components"""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum, auto
 import colorama as Colour
 
@@ -36,5 +36,5 @@ class ColourInfo:
 class Style:
     """Collection of proprties that can define the look of a component"""
 
-    area_info: AreaInfo = AreaInfo()  # properties for area expansion
-    colour_info: ColourInfo = ColourInfo  # properties for component colouring
+    area_info: AreaInfo = field(default_factory=AreaInfo)  # properties for area expansion
+    colour_info: ColourInfo = field(default_factory=ColourInfo)  # properties for component colouring

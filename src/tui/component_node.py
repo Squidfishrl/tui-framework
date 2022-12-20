@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-import tui._node_list as nl
+from tui._node_list import NodeList
 
 
 class CMNode(ABC):
@@ -15,7 +15,7 @@ class CMNode(ABC):
     ) -> None:
         self.__id = identifier
         self.__name = name
-        self.__children: nl.NodeList = nl.NodeList()
+        self.__children: NodeList = NodeList()
 
     @property
     def id(self) -> str | None:
@@ -29,7 +29,7 @@ class CMNode(ABC):
 
     @property
     @abstractmethod
-    def children(self) -> nl.NodeList:
+    def children(self) -> NodeList:
         """Return children of this node
             abstract method since some components may not have children"""
         return self.__children

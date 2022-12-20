@@ -1,8 +1,12 @@
 """Internal listing of children components used by the parent component"""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 from _collections_abc import Sequence
 
-from tui.component import Component
+if TYPE_CHECKING:
+    from tui.component import Component
 
 
 class NodeList(Sequence):
@@ -19,17 +23,17 @@ class NodeList(Sequence):
     def __len__(self) -> int:
         return len(self._nodes_list)
 
-    def __getitem__(self, index: int) -> Component:
+    def __getitem__(self, index: int | slice) -> Component:
         return self._nodes_list[index]
 
     def __setitem__(self, index: int, new_component: Component) -> None:
         prev_component = self._nodes_list[index]
         self._nodes_list[index] = new_component
 
-        if prev_component.get_id() is not None:
-            self._nodes_dict.pop(prev_component.get_id())
-        if new_component.get_id() is not None:
-            self._nodes_dict[new_component.get_id()] = new_component
+        if prev_component.id is not None:
+            self._nodes_dict.pop(prev_component.id)
+        if new_component.id is not None:
+            self._nodes_dict[new_component.id] = new_component
 
     def __contains__(self, component: Component) -> bool:
         return component in self._nodes_list
@@ -40,31 +44,28 @@ class NodeList(Sequence):
 
     def append(self, component: Component) -> None:
         """Add component at the end of the list"""
-        if not isinstance(component, Component):
-            raise TypeError
-
         if component in self._nodes_list:
             raise ValueError("Component exists already")
 
-        if component.get_id() in self._nodes_dict:
+        if component.id in self._nodes_dict:
             raise KeyError
 
         self._nodes_list.append(component)
 
-        if component.get_id() is not None:
-            self._nodes_dict[component.get_id()] = component
+        if component.id is not None:
+            self._nodes_dict[component.id] = component
 
     def pop(self, index: int) -> Component:
         """Remove component (search by id)"""
         component = self._nodes_list.pop(index)
 
-        if component.get_id() is not None:
-            self._nodes_dict.pop(component.get_id())
+        if component.id is not None:
+            self._nodes_dict.pop(component.id)
 
         return component
 
     def remove(self, component: Component) -> None:
         """Remove component"""
         self._nodes_list.remove(component)
-        if component.get_id() is not None:
-            self._nodes_dict.pop(component.get_id())
+        if component.id is not None:
+            self._nodes_dict.pop(component.id)

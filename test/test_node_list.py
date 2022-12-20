@@ -1,7 +1,7 @@
 import pytest
 
 from tui._node_list import NodeList
-from tui.component import Component
+from tui.components.division import Division 
 
 
 @pytest.fixture
@@ -11,18 +11,18 @@ def empty_list():
 
 @pytest.fixture
 def one_component():
-    return Component(identifier="one component")
+    return Division(identifier="one component")
 
 
 @pytest.fixture
 def ten_components():
-    return [Component(identifier=str(i)) for i in range(10)]
+    return [Division(identifier=str(i)) for i in range(10)]
 
 
 @pytest.fixture
 def ten_component_list():
     list = NodeList()
-    for component in [Component(identifier=str(i)) for i in range(10)]:
+    for component in [Division(identifier=str(i)) for i in range(10)]:
         list.append(component)
 
     return list
@@ -33,7 +33,7 @@ def test_empty_list(empty_list):
     assert len(empty_list) == 0
 
 
-def test_append_one_component(empty_list: NodeList, one_component: Component):
+def test_append_one_component(empty_list: NodeList, one_component: Division):
     """Test that NodeList updates its length when one component is added"""
     empty_list.append(one_component)
     assert len(empty_list) == 1
@@ -41,7 +41,7 @@ def test_append_one_component(empty_list: NodeList, one_component: Component):
 
 def test_append_existing_component(
         empty_list: NodeList,
-        one_component: Component
+        one_component: Division
         ):
     """Test that duplicate components cannot be added"""
     with pytest.raises(ValueError):
@@ -49,7 +49,7 @@ def test_append_existing_component(
         empty_list.append(one_component)
 
 
-def test_append_many(empty_list: NodeList, ten_components: list[Component]):
+def test_append_many(empty_list: NodeList, ten_components: list[Division]):
     """Test that NodeList updates its length when many components are added"""
     for component in ten_components:
         empty_list.append(component)
@@ -60,7 +60,7 @@ def test_append_many(empty_list: NodeList, ten_components: list[Component]):
 def test_get_item(ten_component_list: NodeList):
     """Test that components in NodeList can be accessed with []"""
     for i in range(10):
-        if not isinstance(ten_component_list[i], Component):
+        if not isinstance(ten_component_list[i], Division):
             assert False
 
     assert True
@@ -72,15 +72,15 @@ def test_get_item_with_invalid_index(ten_component_list: NodeList):
         ten_component_list[50]
 
 
-def test_set_item(ten_component_list: NodeList, one_component: Component):
+def test_set_item(ten_component_list: NodeList, one_component: Division):
     """Test that an existing component in NodeList can be reset"""
     ten_component_list[0] = one_component
-    assert ten_component_list[0].get_id() == one_component.get_id()
+    assert ten_component_list[0].id == one_component.id
 
 
 def test_does_not_contain_component(
         ten_component_list: NodeList,
-        one_component: Component
+        one_component: Division
         ):
     """Test that a component doesn't exist in NodeList"""
     assert not one_component in ten_component_list
@@ -88,7 +88,7 @@ def test_does_not_contain_component(
 
 def test_contains_component(
         ten_component_list: NodeList,
-        one_component: Component
+        one_component: Division
         ):
     """Test that a component exists in NodeList"""
     ten_component_list[4] = one_component
@@ -97,7 +97,7 @@ def test_contains_component(
 
 def test_get_component_with_id(ten_component_list: NodeList):
     """Test that a component with the corresponding id is returned"""
-    assert isinstance(ten_component_list.get_component_with_id("4"), Component)
+    assert isinstance(ten_component_list.get_component_with_id("4"), Division)
 
 
 def test_get_component_with_invalid_id(ten_component_list: NodeList):
@@ -127,7 +127,7 @@ def test_internal_dict_is_updated(ten_component_list: NodeList):
 
     ten_component_list.remove(ten_component_list[1])  # 6 8 9 at this point
 
-    ten_component_list.append(Component())
-    ten_component_list.append(Component(identifier="l"))
+    ten_component_list.append(Division())
+    ten_component_list.append(Division(identifier="l"))
 
     assert list(ten_component_list._nodes_dict.keys()) == ["6", "8", "9", "l"]

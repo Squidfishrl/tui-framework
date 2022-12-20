@@ -1,6 +1,11 @@
 """Area for the component when it's rendered"""
 
-from tui.style import AreaInfo
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from tui.style import AreaInfo
 
 
 class Area:

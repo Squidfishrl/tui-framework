@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tui"
-version = "0.2.0"
+version = "0.2.1"
 description = "Framework for creating text user interfaces"
 authors = [
         {name="Ivaylo Genchev", email="ivo.genchev4@gmail.com"}
 ]
 license = "GPL-3.0-only"
-requires-python=">=3.10"
+requires-python = ">=3.10"
 repository = "https://github.com/Squidfishrl/tui-framework"
 
 [tool.pytest.ini_options]

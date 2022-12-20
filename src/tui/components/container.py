@@ -18,4 +18,9 @@ class Container(Component):
         super().__init__(identifier=identifier, style=style)
 
         for child in children:
+            # Components that inherit Container could pass *children to
+            # super().__init__() which is seen as an empty tuple here
+            if isinstance(child, tuple):
+                continue
+
             self.children.append(child)
