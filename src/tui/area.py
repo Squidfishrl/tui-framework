@@ -1,20 +1,21 @@
 """Area for the component when it's rendered"""
 
+from tui.style import AreaInfo
+
 
 class Area:
     """Area for the component when it's rendered"""
     def __init__(
             self,
-            rows: int = 0,  # Rows for the area
-            columns: int = 0  # Columns for the area
+            area_info: AreaInfo  # min, max rows
     ) -> None:
-        self._rows: int = rows
-        self._columns: int = columns
+        self._rows: int = area_info.min_rows
+        self._columns: int = area_info.min_columns
         self.char_area: list[list[str]]
         self.update_area()
 
     def update_area(self) -> None:
-        """Update the area to match rowsXcolumns resolution"""
+        """Update the area to match rows x columns resolution"""
         self.char_area = [
                 [' ' for _ in range(self._columns)]
                 for _ in range(self._rows)

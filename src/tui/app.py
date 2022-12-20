@@ -1,7 +1,7 @@
 """App handles other modules and prints the application to the terminal"""
 
 from tui.terminal import Terminal
-from tui.area import Area
+from tui.components import Container
 
 
 class App():
@@ -9,16 +9,12 @@ class App():
     def __init__(self) -> None:
         # Instance of the terminal the app is being ran in
         self.__terminal: Terminal = Terminal()
-        # 2D array of chars representing terminal resolution
-        self.__area: Area = Area(
-                rows=self.__terminal.rows,
-                columns=self.__terminal.columns
-        )
+        self.root: Container  # TODO: Should change to a non abstract class
 
     def run(self) -> None:
         """Start and constantly update the app."""
         while True:
-            print(self.__area.char_area)
+            pass
 
 
 def main():
