@@ -1,5 +1,7 @@
 """Node definition creating a DOM-like structure"""
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 
 from tui._node_list import NodeList

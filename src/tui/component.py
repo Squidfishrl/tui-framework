@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 from tui.area import Area
 from tui.component_node import CMNode
 from tui.style import Style
@@ -26,6 +25,10 @@ class Component(CMNode):
         return self.__style
 
     @property
-    def area(self) -> Style:
+    def area(self) -> Area:
         """Get this component's area (space it's drawn in)"""
         return self.__area
+
+    def _add_border(self) -> None:
+        pass
+        
