@@ -6,11 +6,20 @@ import copy
 from typing import TYPE_CHECKING
 
 from tui.component import Area
-from tui._coordinates import Coordinates, Rectangle
+from tui._coordinates import Coordinates, Rectangle, CoordinateError
 from tui.style import AreaInfo
 
 if TYPE_CHECKING:
     from tui.component import Component
+
+
+class CompositorError(Exception):
+    """Base class for exceptions in the compositor"""
+
+
+class InsufficientAreaError(CompositorError):
+    """Raise when components can't be composed because their area size isn't 
+    large enough"""
 
 
 class Compositor:
@@ -28,32 +37,44 @@ class Compositor:
         root: the component's area that's being composed
         next_component: rectangular area which the next component should occupy
         """
-        # initialise starting area for first component (its area size)
-        if next_component is None:
-            max_rows = root.area.rows - 1  # -1 since coords start from 0
-            max_cols = root.area.columns - 1
-            next_component = Rectangle(
-                    Coordinates(0, 0),
-                    Coordinates(row=max_rows, column=max_cols)
-                )
-
-        # recursion end case
-        if root is None:
-            return root.area
 
         new_area = copy.deepcopy(root.area)
 
         for child in root.children:
+            # initialise starting area for first component (its area size)
+            if next_component is None:
+                next_component = Rectangle(
+                        Coordinates(0, 0),
+                        Coordinates(  # -1 since first row has index 0
+                                row=root.area.rows - 1,
+                                column=root.area.columns - 1
+                            )
+                    )
+            else:
+                # Assume all components are not inline
+                # TODO: function that changes next_component based on style
+                try:
+                    next_component.top_left = Coordinates(
+                            row=next_component.top_left.row + child_area.rows,
+                            column=next_component.top_left.column
+                        )
+                except CoordinateError:
+                    raise InsufficientAreaError(
+                            "Component area isn't large enough"
+                        )
+
+            # recursion ends when there are no more children
             child_area = Compositor.compose(child)
 
             new_area.area_ptr = next_component.top_left
-            new_area.add_chars(str(child_area), column_preserve=True)
-            # Assume all components are not inline
-            next_component.top_left = Coordinates(
-                    row=next_component.top_left.row + child_area.rows,
-                    column=next_component.top_left.column
-                )
-                
+
+            try:
+                new_area.add_chars(str(child_area), column_preserve=True)
+            except IndexError:
+                raise InsufficientAreaError(
+                        "Component area isn't large enough"
+                    )
+
 
         return new_area
 

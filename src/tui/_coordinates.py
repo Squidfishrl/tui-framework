@@ -3,6 +3,10 @@
 from dataclasses import dataclass
 
 
+class CoordinateError(ValueError):
+    """Raise when invalid coordinates are passed"""
+
+
 @dataclass
 class Coordinates:
     """Structure for containing mutable coordinates"""
@@ -47,11 +51,11 @@ class Rectangle:
 
     @top_left.setter
     def top_left(self, new_coords: Coordinates) -> None: 
-        if new_coords.column >= self._top_right.column:
-            raise IndexError("Invalid column coordinates") 
+        if new_coords.column > self._top_right.column:
+            raise CoordinateError("Invalid column coordinates") 
 
-        if new_coords.row >= self._bottom_left.row:
-            raise IndexError("Invalid row coordinates") 
+        if new_coords.row > self._bottom_left.row:
+            raise CoordinateError("Invalid row coordinates") 
 
         self._top_left.column = new_coords.column
         self._top_left.row = new_coords.row
@@ -61,11 +65,11 @@ class Rectangle:
 
     @top_right.setter
     def top_right(self, new_coords: Coordinates) -> None: 
-        if new_coords.column <= self._top_left.column:
-            raise IndexError("Invalid column coordinates") 
+        if new_coords.column < self._top_left.column:
+            raise CoordinateError("Invalid column coordinates") 
 
-        if new_coords.row >= self._bottom_right.row:
-            raise IndexError("Invalid row coordinates") 
+        if new_coords.row > self._bottom_right.row:
+            raise CoordinateError("Invalid row coordinates") 
 
         self._top_right.column = new_coords.column
         self._top_right.row = new_coords.row
@@ -75,11 +79,11 @@ class Rectangle:
 
     @bottom_left.setter
     def bottom_left(self, new_coords: Coordinates) -> None: 
-        if new_coords.column >= self._bottom_right.column:
-            raise IndexError("Invalid column coordinates") 
+        if new_coords.column > self._bottom_right.column:
+            raise CoordinateError("Invalid column coordinates") 
 
-        if new_coords.row <= self._top_left.row:
-            raise IndexError("Invalid row coordinates") 
+        if new_coords.row < self._top_left.row:
+            raise CoordinateError("Invalid row coordinates") 
 
         self._bottom_left.column = new_coords.column
         self._bottom_left.row = new_coords.row
@@ -89,14 +93,16 @@ class Rectangle:
 
     @bottom_right.setter
     def bottom_right(self, new_coords: Coordinates) -> None: 
-        if new_coords.column <= self._bottom_left.column:
-            raise IndexError("Invalid column coordinates") 
+        if new_coords.column < self._bottom_left.column:
+            raise CoordinateError("Invalid column coordinates") 
 
-        if new_coords.row <= self._top_right.row:
-            raise IndexError("Invalid row coordinates") 
+        if new_coords.row < self._top_right.row:
+            raise CoordinateError("Invalid row coordinates") 
 
         self._bottom_right.column = new_coords.column
         self._bottom_right.row = new_coords.row
 
         self._top_right.column = new_coords.column
         self._bottom_left.row = new_coords.row
+
+
