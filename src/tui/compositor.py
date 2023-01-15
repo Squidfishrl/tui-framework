@@ -5,9 +5,8 @@ from __future__ import annotations
 import copy
 from typing import TYPE_CHECKING
 
-from tui.component import Area
 from tui._coordinates import Coordinates, Rectangle, CoordinateError
-from tui.style import AreaInfo
+from tui.component import Area
 
 if TYPE_CHECKING:
     from tui.component import Component
@@ -18,7 +17,7 @@ class CompositorError(Exception):
 
 
 class InsufficientAreaError(CompositorError):
-    """Raise when components can't be composed because their area size isn't 
+    """Raise when components can't be composed because their area size isn't
     large enough"""
 
 
@@ -31,7 +30,7 @@ class Compositor:
     def compose(
             root: Component,
             next_component: Rectangle = None
-        ) -> Area:
+    ) -> Area:
         """Compose a component with its children components recursively
 
         root: the component's area that's being composed
@@ -40,34 +39,26 @@ class Compositor:
 
         new_area = copy.deepcopy(root.area)
 
+        # the rectanhle the previous child was in
+        prev_rect: None | Rectangle = None
+
         for child in root.children:
-            # initialise starting area for first component (its area size)
-            if next_component is None:
-                next_component = Rectangle(
-                        Coordinates(0, 0),
-                        Coordinates(  # -1 since first row has index 0
-                                row=root.area.rows - 1,
-                                column=root.area.columns - 1
-                            )
+            try:
+                prev_rect = Compositor._get_next_rectangle(
+                        parent=root,
+                        prev_rect=prev_rect,
+                        component=child
                     )
-            else:
-                # Assume all components are not inline
-                # TODO: function that changes next_component based on style
-                try:
-                    next_component.top_left = Coordinates(
-                            row=next_component.top_left.row + child_area.rows,
-                            column=next_component.top_left.column
-                        )
-                except CoordinateError:
-                    raise InsufficientAreaError(
-                            "Component area isn't large enough"
-                        )
+            except CoordinateError:
+                raise InsufficientAreaError(
+                        "Component area isn't large enough"
+                    )
 
             # recursion ends when there are no more children
             child_area = Compositor.compose(child)
+            new_area.area_ptr = prev_rect.top_left
 
-            new_area.area_ptr = next_component.top_left
-
+            # draw child component
             try:
                 new_area.add_chars(str(child_area), column_preserve=True)
             except IndexError:
@@ -75,8 +66,93 @@ class Compositor:
                         "Component area isn't large enough"
                     )
 
-
         return new_area
+
+    @staticmethod
+    def _get_next_rectangle(
+            parent: Component,  # the parent component this one will reside in
+            component: Component,  # the component calculations are done for
+            prev_rect: None | Rectangle = None  # rect for the prev component
+    ) -> Rectangle:
+        """Helper function that decides where components are placed when
+        compositioning"""
+        if parent.style.compositor_info.inline:
+            return Compositor.__get_next_rectangle_inline(
+                    parent=parent,
+                    component=component,
+                    prev_rect=prev_rect
+                )
+        else:
+            return Compositor.__get_next_rectangle_block(
+                    parent=parent,
+                    component=component,
+                    prev_rect=prev_rect
+                )
+
+    @staticmethod
+    def __get_next_rectangle_inline(
+            parent: Component,  # the parent component this one will reside in
+            component: Component,  # the component calculations are done for
+            prev_rect: None | Rectangle = None  # rect for the prev component
+    ) -> Rectangle:
+        """Helper function for inline compositing. Returns the area the next
+        component should be placed in
+
+        Default prev_rectangle is a rectangle outside of the parent's area
+        that's derrived to place the component in the top left of the parent
+        component's area:
+            top_left:  row = 0 && column <= -1
+            bottom_right:  row >= 0 && column = -1
+        """
+        if prev_rect is None:
+            prev_rect = Rectangle(
+                    top_left=Coordinates(row=0, column=-1),
+                    bottom_right=Coordinates(row=0, column=-1)
+                )
+
+        return Rectangle(
+                top_left=Coordinates(
+                        row=prev_rect.top_left.row,
+                        column=prev_rect.bottom_right.column + 1
+                    ),
+                bottom_right=Coordinates(
+                        row=parent.area.rows - 1,
+                        column=prev_rect.bottom_right.column +
+                        component.area.columns
+                    )
+            )
+
+    @staticmethod
+    def __get_next_rectangle_block(
+            parent: Component,  # the parent component this one will reside in
+            component: Component,  # the component calculations are done for
+            prev_rect: None | Rectangle = None  # rect for the prev component
+    ) -> Rectangle:
+        """Helper function for block compositing. Returns the area the next
+        component should be placed in
+
+        Default prev_rectangle is a rectangle outside of the parent's area
+        that's derrived to place the component in the top left of the parent
+        component's area:
+            top_left:  row = -1 && column <= 0
+            bottom_right:  row >= -1 && column = 0
+        """
+        if prev_rect is None:
+            prev_rect = Rectangle(
+                    top_left=Coordinates(row=-1, column=0),
+                    bottom_right=Coordinates(row=-1, column=0)
+                )
+
+        return Rectangle(
+                top_left=Coordinates(
+                        row=prev_rect.bottom_right.row + 1,
+                        column=prev_rect.top_left.column
+                    ),
+                bottom_right=Coordinates(
+                        row=prev_rect.bottom_right.row + component.area.rows,
+                        column=parent.area.columns - 1
+                    )
+            )
 
     @staticmethod
     def fill_area(component: Component, symbol: str) -> Area:
@@ -120,4 +196,3 @@ class Compositor:
         new_area.area_ptr = Coordinates(new_area.rows - 1, 0)
         new_area.add_chars(symbol * new_area.rows)
         return new_area
-

@@ -21,13 +21,13 @@ class Area:
     ) -> None:
         self._rows: int = area_info.min_rows
         self._columns: int = area_info.min_columns
-        self.char_area: list[list[str]] = [  # rows x columns 
+        self.char_area: list[list[str]] = [  # rows x columns
                 [' ' for _ in range(self._columns)]
                 for _ in range(self._rows)
             ]
 
-        # is True where char_area is being occupied 
-        self.occupied_area: list[list[bool]] = [  # rows x columns 
+        # is True where char_area is being occupied
+        self.occupied_area: list[list[bool]] = [  # rows x columns
                 [False for _ in range(self._columns)]
                 for _ in range(self._rows)
             ]
@@ -45,7 +45,6 @@ class Area:
 
         # make sure area_ptr isn't mutated
         temp_ptr = copy.deepcopy(self.area_ptr)
-        # TODO: verify that str is enough to fit in char_area
 
         for char in str:
             if char == '\n':
@@ -75,7 +74,7 @@ class Area:
                     column = 0
 
                 continue
- 
+
             if row >= self.rows or column >= self.columns:
                 return False
 
@@ -84,7 +83,9 @@ class Area:
         return True
 
     def __str__(self):
-        return "\n".join(["".join([char for char in row]) for row in self.char_area])
+        return "\n".join(
+                ["".join([char for char in row]) for row in self.char_area]
+            )
 
     @property
     def rows(self) -> int:

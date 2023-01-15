@@ -98,8 +98,8 @@ def test_area_add_multiline_chars_with_column_preserve_invalid_size(
     with pytest.raises(IndexError):
         three_by_three_area.add_chars("12\n34\n123", column_preserve=True)
 
+
 def test_area_to_string(three_by_three_area: Area):
     """Test that area is converted to string correctly"""
     three_by_three_area.add_chars("123\n456\n789")
     assert "123\n456\n789" == str(three_by_three_area)
-
