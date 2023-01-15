@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 from tui.area import Area
 from tui.component_node import CMNode
 from tui.style import Style
@@ -26,6 +25,18 @@ class Component(CMNode):
         return self.__style
 
     @property
-    def area(self) -> Style:
+    def area(self) -> Area:
         """Get this component's area (space it's drawn in)"""
         return self.__area
+
+    @area.setter
+    def _area(self, area: Area) -> None:
+        """Set the area of an object. The previous area's contents are copied 
+        to the new area"""
+        # TODO: copy the contents of the old area to the new area
+        self.__area = area
+
+
+    def _add_border(self) -> None:
+        pass
+        

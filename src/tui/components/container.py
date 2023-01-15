@@ -23,4 +23,7 @@ class Container(Component):
             if isinstance(child, tuple):
                 continue
 
-            self.children.append(child)
+            self.append_child(child)
+
+    def append_child(self, component: Component):
+        self.children.append(component)

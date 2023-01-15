@@ -33,8 +33,15 @@ class ColourInfo:
 
 
 @dataclass
+class CompositorInfo:
+    """Define properties that define how the component is composed"""
+    # is the component inserted on the current row, or on the next one
+    inline: bool = False
+
+
+@dataclass
 class Style:
     """Collection of proprties that can define the look of a component"""
-
-    area_info: AreaInfo = field(default_factory=AreaInfo)  # properties for area expansion
-    colour_info: ColourInfo = field(default_factory=ColourInfo)  # properties for component colouring
+    area_info: AreaInfo = field(default_factory=AreaInfo)
+    compositor_info: CompositorInfo = field(default_factory=CompositorInfo)
+    colour_info: ColourInfo = field(default_factory=ColourInfo)
