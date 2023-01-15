@@ -27,10 +27,7 @@ class Compositor:
     """
 
     @staticmethod
-    def compose(
-            root: Component,
-            next_component: Rectangle = None
-    ) -> Area:
+    def compose(root: Component) -> Area:
         """Compose a component with its children components recursively
 
         root: the component's area that's being composed
@@ -49,10 +46,10 @@ class Compositor:
                         prev_rect=prev_rect,
                         component=child
                     )
-            except CoordinateError:
+            except CoordinateError as exc:
                 raise InsufficientAreaError(
                         "Component area isn't large enough"
-                    )
+                    ) from exc
 
             # recursion ends when there are no more children
             child_area = Compositor.compose(child)
@@ -61,10 +58,10 @@ class Compositor:
             # draw child component
             try:
                 new_area.add_chars(str(child_area), column_preserve=True)
-            except IndexError:
+            except IndexError as exc:
                 raise InsufficientAreaError(
                         "Component area isn't large enough"
-                    )
+                    ) from exc
 
         return new_area
 
@@ -82,12 +79,12 @@ class Compositor:
                     component=component,
                     prev_rect=prev_rect
                 )
-        else:
-            return Compositor.__get_next_rectangle_block(
-                    parent=parent,
-                    component=component,
-                    prev_rect=prev_rect
-                )
+
+        return Compositor.__get_next_rectangle_block(
+                parent=parent,
+                component=component,
+                prev_rect=prev_rect
+            )
 
     @staticmethod
     def __get_next_rectangle_inline(

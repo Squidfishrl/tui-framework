@@ -1,3 +1,5 @@
+"""Test that ./src/area.py is behaving correctly"""
+
 import pytest
 
 from tui.area import Area
@@ -6,6 +8,7 @@ from tui.style import AreaInfo
 
 @pytest.fixture
 def five_rows_ten_columns_area():
+    """Return an area with five rows and ten columns"""
     area_info = AreaInfo(min_rows=5, min_columns=10)
     area = Area(area_info=area_info)
     return area
@@ -13,6 +16,7 @@ def five_rows_ten_columns_area():
 
 @pytest.fixture
 def three_by_three_area():
+    """Return an area with three rows and three columns"""
     area_info = AreaInfo(min_rows=3, min_columns=3)
     area = Area(area_info=area_info)
     return area

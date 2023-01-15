@@ -26,4 +26,5 @@ class Container(Component):
             self.append_child(child)
 
     def append_child(self, component: Component):
+        """Add a child at the end of the component list of the container"""
         self.children.append(component)

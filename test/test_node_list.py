@@ -1,31 +1,36 @@
+"""Test that src/_node_list.py works correctly"""
 import pytest
 
 from tui._node_list import NodeList
-from tui.components.division import Division 
+from tui.components.division import Division
 
 
 @pytest.fixture
 def empty_list():
+    """Return an empty node list"""
     return NodeList()
 
 
 @pytest.fixture
 def one_component():
+    """Return one component"""
     return Division(identifier="one component")
 
 
 @pytest.fixture
 def ten_components():
+    """Return ten components"""
     return [Division(identifier=str(i)) for i in range(10)]
 
 
 @pytest.fixture
 def ten_component_list():
-    list = NodeList()
+    """Return a list with ten components"""
+    _list = NodeList()
     for component in [Division(identifier=str(i)) for i in range(10)]:
-        list.append(component)
+        _list.append(component)
 
-    return list
+    return _list
 
 
 def test_empty_list(empty_list):
@@ -69,7 +74,7 @@ def test_get_item(ten_component_list: NodeList):
 def test_get_item_with_invalid_index(ten_component_list: NodeList):
     """Test that using an index out of scope raises an IndexError"""
     with pytest.raises(IndexError):
-        ten_component_list[50]
+        ten_component_list[50] = None  # test accessing - not the statement
 
 
 def test_set_item(ten_component_list: NodeList, one_component: Division):
@@ -83,7 +88,7 @@ def test_does_not_contain_component(
         one_component: Division
         ):
     """Test that a component doesn't exist in NodeList"""
-    assert not one_component in ten_component_list
+    assert one_component not in ten_component_list
 
 
 def test_contains_component(
@@ -109,10 +114,10 @@ def test_pop_component(ten_component_list: NodeList):
     """Test that the component with the corresponding index is removed"""
     removed_component = ten_component_list.pop(2)
     assert removed_component not in ten_component_list
-    
+
 
 def test_remove_component(ten_component_list: NodeList):
-    """Test that the correspondig component is removed and NodeList length is 
+    """Test that the correspondig component is removed and NodeList length is
     correct"""
     component = ten_component_list[5]
     ten_component_list.remove(component)

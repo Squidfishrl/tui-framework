@@ -1,4 +1,4 @@
-"""Container component acting as a div"""
+"""Container component acting as a diision"""
 
 from __future__ import annotations
 

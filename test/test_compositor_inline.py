@@ -1,3 +1,4 @@
+"""Test that src/compositor.py inline compositing works correctly"""
 import pytest
 
 from tui.compositor import Compositor, InsufficientAreaError
@@ -7,30 +8,33 @@ from tui.style import Style, AreaInfo
 
 @pytest.fixture
 def ten_by_ten_div():
+    """Return a division with 10 rows and ten columns"""
     style = Style(area_info=AreaInfo(min_columns=10, min_rows=10))
-    style.compositor_info.inline=True
+    style.compositor_info.inline = True
     return Division(identifier="div1", style=style)
 
 
 @pytest.fixture
 def three_by_ten_divs():
+    """Return a division with 10 rows and 3 columns"""
     style = Style(area_info=AreaInfo(min_columns=3, min_rows=10))
-    style.compositor_info.inline=True
+    style.compositor_info.inline = True
     divs = []
 
-    for id in range(20):
-        divs.append(Division(identifier=str(id), style=style))
+    for identifier in range(4):
+        divs.append(Division(identifier=str(identifier), style=style))
 
     return divs
 
 
 @pytest.fixture
 def one_by_ten_divs():
+    """Return a division with 10 rows and 1 column"""
     style = Style(area_info=AreaInfo(min_columns=1, min_rows=10))
     divs = []
 
-    for id in range(60):
-        divs.append(Division(identifier=str(id + 20), style=style))
+    for identifier in range(10):
+        divs.append(Division(identifier=str(identifier + 4), style=style))
 
     return divs
 
@@ -38,7 +42,7 @@ def one_by_ten_divs():
 def test_fill_area(ten_by_ten_div: Division):
     """Test that a component is filled correctly"""
     new_area = Compositor.fill_area(ten_by_ten_div, symbol="+")
-    assert (str(new_area) == """\
+    assert str(new_area) == """\
 ++++++++++
 ++++++++++
 ++++++++++
@@ -49,13 +53,13 @@ def test_fill_area(ten_by_ten_div: Division):
 ++++++++++
 ++++++++++
 ++++++++++\
-""")
+"""
 
 
 def test_compose_one_child(
         three_by_ten_divs: list[Division],
         ten_by_ten_div: Division
-    ):
+):
     """Test that one child is composed correctly without column/row expansion
     """
     ten_by_ten_div._Component__area = Compositor.fill_area(
@@ -68,7 +72,7 @@ def test_compose_one_child(
         )
     ten_by_ten_div.append_child(three_by_ten_divs[0])
 
-    assert (str(Compositor.compose(ten_by_ten_div)) == """\
+    assert str(Compositor.compose(ten_by_ten_div)) == """\
 ***+++++++
 ***+++++++
 ***+++++++
@@ -79,13 +83,13 @@ def test_compose_one_child(
 ***+++++++
 ***+++++++
 ***+++++++\
-""")
+"""
 
 
 def test_compose_two_child(
         three_by_ten_divs: list[Division],
         ten_by_ten_div: Division
-    ):
+):
     """Test that two children are composed correctly"""
     ten_by_ten_div._area = Compositor.fill_area(
             ten_by_ten_div,
@@ -104,7 +108,7 @@ def test_compose_two_child(
     ten_by_ten_div.append_child(three_by_ten_divs[0])
     ten_by_ten_div.append_child(three_by_ten_divs[1])
 
-    assert (str(Compositor.compose(ten_by_ten_div)) == """\
+    assert str(Compositor.compose(ten_by_ten_div)) == """\
 ***###++++
 ***###++++
 ***###++++
@@ -115,13 +119,13 @@ def test_compose_two_child(
 ***###++++
 ***###++++
 ***###++++\
-""")
+"""
 
 
 def test_compose_child_that_exceeds_area_size(
         three_by_ten_divs: list[Division],
         ten_by_ten_div: Division
-    ):
+):
     """Test that an exception is thrown when there isn't enough area to compose
     the children of a component"""
     for i in range(4):
@@ -135,7 +139,7 @@ def test_compose_one_child_which_has_one_child(
         ten_by_ten_div: Division,
         three_by_ten_divs: list[Division],
         one_by_ten_divs: list[Division]
-        ):
+):
     """Test that a component with a child, which has a child, is composed
     correctly"""
 
@@ -157,7 +161,7 @@ def test_compose_one_child_which_has_one_child(
             symbol=str("#")
         )
 
-    assert (str(Compositor.compose(ten_by_ten_div)) == """\
+    assert str(Compositor.compose(ten_by_ten_div)) == """\
 #**+++++++
 #**+++++++
 #**+++++++
@@ -168,14 +172,15 @@ def test_compose_one_child_which_has_one_child(
 #**+++++++
 #**+++++++
 #**+++++++\
-""")
+"""
+
 
 def test_compose_children_which_have_children(
         ten_by_ten_div: Division,
         three_by_ten_divs: list[Division],
         one_by_ten_divs: list[Division]
-        ):
-    """Test that a component with 3 children, which each have 3 children, is 
+):
+    """Test that a component with 3 children, which each have 3 children, is
     composed correctly"""
 
     ten_by_ten_div._area = Compositor.fill_area(
@@ -183,7 +188,7 @@ def test_compose_children_which_have_children(
             symbol=str("+")
         )
 
-    nested_children = 0 # second layer children counter
+    nested_children = 0  # second layer children counter
     for i in range(3):
         ten_by_ten_div.append_child(three_by_ten_divs[i])
         for _ in range(3):
@@ -211,7 +216,7 @@ def test_compose_children_which_have_children(
             symbol=str("@")
         )
 
-    assert (str(Compositor.compose(ten_by_ten_div)) == """\
+    assert str(Compositor.compose(ten_by_ten_div)) == """\
 012345678+
 012345678+
 012345678+
@@ -222,4 +227,4 @@ def test_compose_children_which_have_children(
 012345678+
 012345678+
 012345678+\
-""")
+"""

@@ -35,18 +35,21 @@ class Area:
         # used for easier char_area editing.
         self.area_ptr: Coordinates = Coordinates(0, 0)
 
-    def add_chars(self, str: str, column_preserve: bool = False) -> None:
+    def add_chars(self, string: str, column_preserve: bool = False) -> None:
         """Add a string starting from area_ptr. '\n' means row increment
         area_ptr is unaffected
         """
 
-        if not self._verify_str(str=str, column_preserve=column_preserve):
+        if not self._verify_str(
+                string=string,
+                column_preserve=column_preserve
+        ):
             raise IndexError("String is too large")
 
         # make sure area_ptr isn't mutated
         temp_ptr = copy.deepcopy(self.area_ptr)
 
-        for char in str:
+        for char in string:
             if char == '\n':
                 temp_ptr.row += 1
                 if column_preserve:
@@ -60,12 +63,12 @@ class Area:
             self.occupied_area[temp_ptr.row][temp_ptr.column] = True
             temp_ptr.column += 1
 
-    def _verify_str(self, str: str, column_preserve: bool) -> bool:
+    def _verify_str(self, string: str, column_preserve: bool) -> bool:
         """Verify that string can fit in char_area - used in add_chars"""
         row = self.area_ptr.row
         column = self.area_ptr.column
 
-        for char in str:
+        for char in string:
             if char == '\n':
                 row += 1
                 if column_preserve:
@@ -84,7 +87,7 @@ class Area:
 
     def __str__(self):
         return "\n".join(
-                ["".join([char for char in row]) for row in self.char_area]
+                ["".join(list(row)) for row in self.char_area]
             )
 
     @property

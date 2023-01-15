@@ -31,12 +31,10 @@ class Component(CMNode):
 
     @area.setter
     def _area(self, area: Area) -> None:
-        """Set the area of an object. The previous area's contents are copied 
+        """Set the area of an object. The previous area's contents are copied
         to the new area"""
         # TODO: copy the contents of the old area to the new area
         self.__area = area
 
-
     def _add_border(self) -> None:
         pass
-        

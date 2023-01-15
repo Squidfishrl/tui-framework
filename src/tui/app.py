@@ -1,7 +1,13 @@
 """App handles other modules and prints the application to the terminal"""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from tui.terminal import Terminal
-from tui.components import Container
+
+if TYPE_CHECKING:
+    from tui.component import Container
 
 
 class App():
