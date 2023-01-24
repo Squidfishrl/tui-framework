@@ -1,0 +1,56 @@
+\documentclass[
+        a4paper,
+        14pt
+]{report}
+
+\usepackage[T2A, T1]{fontenc}  % there may be non-ascii chars
+\usepackage[utf8]{inputenc}  % there may be unicode
+\usepackage[main=bulgarian,english]{babel}  % bulgarian support
+\usepackage{xcolor}  % colored text
+\usepackage{graphicx}  % for using images
+\usepackage[margin=1in]{geometry}  % page dimensions
+\usepackage{hyperref}  % meta
+\usepackage{indentfirst}  % indent the first paragraph line
+\usepackage{setspace}  % change line spacing 
+\usepackage{float}  % allow for stricter graphicx options
+
+\newcommand{\thesisTitle}{Библиотека за създаване на текстов потребителски интерфейс}
+\newcommand{\thesisAuthor}{Ивайло Генчев}
+\newcommand{\thesisSupervisor}{маг. инж. Владимир Алексиев}
+\newcommand{\thesisSubject}{\thesisTitle}
+\newcommand{\thesisSchool}{ТЕХНОЛОГИЧНО УЧИЛИЩЕ ЕЛЕКТРОННИ СИСТЕМИ}
+\newcommand{\thesisUniversity}{ТЕХНИЧЕСКИ УНИВЕРСИТЕТ - СОФИЯ}
+
+\hypersetup {
+        pdftitle={\thesisTitle},
+        pdfsubject={\thesisSubject},
+        pdfauthor={\thesisAuthor},
+        plainpages=false,
+        colorlinks=false,
+        unicode=true,
+}
+
+\begin{document}
+\onehalfspacing
+\fontsize{14pt}{20}\selectfont  % change font size to 14pt
+
+\input{chapters/title_page}
+\input{chapters/blank_page}
+\input{chapters/00_Introduction}
+\input{chapters/01_Research}
+
+\chapter{Глава 2}
+\input{chapters/02_Requirements}
+
+\chapter{Глава 3}
+\input{chapters/03_Implementation}
+
+\chapter{Глава 4}
+\input{chapters/04_UserGuide}
+
+\chapter{Заключение}
+\input{chapters/05_Conclusion}
+
+\tableofcontents
+
+\end{document}
