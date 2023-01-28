@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 from tui._coordinates import Coordinates
 
 if TYPE_CHECKING:
-    from tui.style import AreaInfo
+    from tui.styles.area import AreaInfo
 
 
 class Area:
@@ -19,8 +19,8 @@ class Area:
             self,
             area_info: AreaInfo  # min, max rows
     ) -> None:
-        self._rows: int = area_info.min_rows
-        self._columns: int = area_info.min_columns
+        self._rows: int = area_info.rows
+        self._columns: int = area_info.columns
         self.char_area: list[list[str]] = [  # rows x columns
                 [' ' for _ in range(self._columns)]
                 for _ in range(self._rows)

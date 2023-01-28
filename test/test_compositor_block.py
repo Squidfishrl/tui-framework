@@ -9,14 +9,14 @@ from tui.style import Style, AreaInfo
 @pytest.fixture
 def ten_by_ten_div():
     """Return a division with 10 rows and 10 columns"""
-    style = Style(area_info=AreaInfo(min_columns=10, min_rows=10))
+    style = Style(area_info=AreaInfo(columns=10, rows=10))
     return Division(identifier="div1", style=style)
 
 
 @pytest.fixture
 def ten_by_three_divs():
     """Return a division with three rows and ten columns"""
-    style = Style(area_info=AreaInfo(min_columns=10, min_rows=3))
+    style = Style(area_info=AreaInfo(columns=10, rows=3))
     divs = []
 
     for identifier in range(4):
@@ -28,7 +28,7 @@ def ten_by_three_divs():
 @pytest.fixture
 def ten_by_one_divs():
     """Return a division with one row and ten columns"""
-    style = Style(area_info=AreaInfo(min_columns=10, min_rows=1))
+    style = Style(area_info=AreaInfo(columns=10, rows=1))
     divs = []
 
     for identifier in range(10):
