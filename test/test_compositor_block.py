@@ -3,7 +3,8 @@ import pytest
 
 from tui.compositor import Compositor, InsufficientAreaError
 from tui.components.division import Division
-from tui.style import Style, AreaInfo
+from tui.style import Style
+from tui.styles.area import AreaInfo
 
 
 @pytest.fixture

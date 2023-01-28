@@ -36,7 +36,6 @@ class Coordinates:
         self._column = column
 
 
-
 @dataclass
 class RestrictedCoordinates(Coordinates):
     """Coordinates that can't go out of rectangular bounds"""
@@ -61,7 +60,7 @@ class RestrictedCoordinates(Coordinates):
     @Coordinates.row.setter
     def row(self, row) -> None:
         if (row > self.restriction.bottom_left.row or
-            row < self.restriction.top_left.row):
+                row < self.restriction.top_left.row):
             raise IndexError("Coordinate out of bounds")
 
         self._row = row
@@ -69,7 +68,7 @@ class RestrictedCoordinates(Coordinates):
     @Coordinates.column.setter
     def column(self, column) -> None:
         if (column < self.restriction.top_left.column or
-            column > self.restriction.bottom_right.column):
+                column > self.restriction.bottom_right.column):
             raise IndexError("Coordinate out of bounds")
 
         self._column = column
@@ -115,12 +114,13 @@ class Rectangle:
 
     @property
     def rows(self) -> int:
+        """Get the amount of rows in the rectnangle"""
         return (self.bottom_left.row - self.top_left.row) + 1
 
     @property
     def columns(self) -> int:
+        """Get the amount of columns in the rectangle"""
         return (self.top_right.column - self.top_left.column) + 1
-
 
     @property
     def top_left(self) -> Coordinates:

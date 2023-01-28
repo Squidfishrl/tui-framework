@@ -154,7 +154,8 @@ class Compositor:
 
     @staticmethod
     def fill_area(component: Component, symbol: str) -> Area:
-        """Fill the entire area of a component with a symbol"""
+        """Fill the entire area of a component with a symbol
+        Used mainly for debugging/tests"""
         if len(symbol) != 1:
             raise ValueError("symbol must be one char")
 

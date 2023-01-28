@@ -48,8 +48,13 @@ class Area:
         ):
             raise IndexError("String is too large")
 
-        for char in string:
+        for count, char in enumerate(string):
             if char == '\n':
+                # if area_ptr is on the last row and the last char is a newline
+                # area_ptr restriction would activate, hence the latter check
+                if count >= len(string) - 1:
+                    break
+
                 self.area_ptr.row += 1
                 if column_preserve:
                     self.area_ptr.column = initital_coords.column
@@ -64,7 +69,7 @@ class Area:
 
             # Required to prevent RestrictedCoordinates exception
             if (self.area_ptr.column < self.area_ptr.restriction.bottom_right
-                .column):
+                    .column):
                 self.area_ptr.column += 1
 
         self.area_ptr.row = initital_coords.row
@@ -86,7 +91,7 @@ class Area:
                 continue
 
             if (row >= self.area_ptr.restriction.rows or
-                column >= self.area_ptr.restriction.columns):
+                    column >= self.area_ptr.restriction.columns):
                 return False
 
             column += 1
