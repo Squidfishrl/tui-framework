@@ -53,7 +53,8 @@ class Compositor:
 
             # recursion ends when there are no more children
             child_area = Compositor.compose(child)
-            new_area.area_ptr = prev_rect.top_left
+            new_area.area_ptr.row = prev_rect.top_left.row
+            new_area.area_ptr.column = prev_rect.top_left.column
 
             # draw child component
             try:
@@ -103,18 +104,18 @@ class Compositor:
         """
         if prev_rect is None:
             prev_rect = Rectangle(
-                    top_left=Coordinates(row=0, column=-1),
-                    bottom_right=Coordinates(row=0, column=-1)
+                    top_left=Coordinates(_row=0, _column=-1),
+                    bottom_right=Coordinates(_row=0, _column=-1)
                 )
 
         return Rectangle(
                 top_left=Coordinates(
-                        row=prev_rect.top_left.row,
-                        column=prev_rect.bottom_right.column + 1
+                        _row=prev_rect.top_left.row,
+                        _column=prev_rect.bottom_right.column + 1
                     ),
                 bottom_right=Coordinates(
-                        row=parent.area.rows - 1,
-                        column=prev_rect.bottom_right.column +
+                        _row=parent.area.rows - 1,
+                        _column=prev_rect.bottom_right.column +
                         component.area.columns
                     )
             )
@@ -136,18 +137,18 @@ class Compositor:
         """
         if prev_rect is None:
             prev_rect = Rectangle(
-                    top_left=Coordinates(row=-1, column=0),
-                    bottom_right=Coordinates(row=-1, column=0)
+                    top_left=Coordinates(_row=-1, _column=0),
+                    bottom_right=Coordinates(_row=-1, _column=0)
                 )
 
         return Rectangle(
                 top_left=Coordinates(
-                        row=prev_rect.bottom_right.row + 1,
-                        column=prev_rect.top_left.column
+                        _row=prev_rect.bottom_right.row + 1,
+                        _column=prev_rect.top_left.column
                     ),
                 bottom_right=Coordinates(
-                        row=prev_rect.bottom_right.row + component.area.rows,
-                        column=parent.area.columns - 1
+                        _row=prev_rect.bottom_right.row + component.area.rows,
+                        _column=parent.area.columns - 1
                     )
             )
 
@@ -158,7 +159,8 @@ class Compositor:
             raise ValueError("symbol must be one char")
 
         new_area = copy.deepcopy(component.area)
-        new_area.area_ptr = Coordinates(0, 0)
+        new_area.area_ptr.row = 0
+        new_area.area_ptr.column = 0
 
         new_area.add_chars(((symbol * new_area.columns)+"\n") * new_area.rows)
         return new_area
@@ -172,7 +174,8 @@ class Compositor:
             raise ValueError("symbol must be one char")
 
         new_area = copy.deepcopy(component.area)
-        new_area.area_ptr = Coordinates(0, 0)
+        new_area.area_ptr.row = 0
+        new_area.area_ptr.column = 0
 
         # add first row
         new_area.add_chars(symbol * new_area.rows)
@@ -190,6 +193,7 @@ class Compositor:
             )
 
         # add last row
-        new_area.area_ptr = Coordinates(new_area.rows - 1, 0)
+        new_area.area_ptr.row = new_area.rows - 1
+        new_area.area_ptr.column = 0
         new_area.add_chars(symbol * new_area.rows)
         return new_area
