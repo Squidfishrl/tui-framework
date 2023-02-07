@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from tui._area_box_model import BoxModel
 from tui._coordinates import RestrictedCoordinates, Coordinates
 
 if TYPE_CHECKING:
     from tui.styles.area import AreaInfo
+    from tui.styles.border import Border
 
 
 class Area:
@@ -17,7 +18,8 @@ class Area:
     """
     def __init__(
             self,
-            area_info: AreaInfo  # min, max rows
+            area_info: AreaInfo,  # min, max rows
+            border: Optional[Border] = None
     ) -> None:
         self.model = BoxModel(info=area_info)
         self.char_area: list[list[str]] = [  # rows x columns
@@ -32,7 +34,55 @@ class Area:
                     _restriction=self.model.with_padding
                 )
 
-    def add_chars(self, string: str, column_preserve: bool = False) -> None:
+        self.add_border(border)
+
+    def add_border(self, border: Optional[Border]) -> None:
+        """Apply border to the area"""
+        if border is None:
+            return
+
+        self.area_ptr.restriction = self.model.with_margin
+
+        border_top = (
+                # First row
+                border.top_left
+                # -2 to account for the corner pieces
+                + border.horizontal * (self.model.with_margin.columns - 2)
+                + border.top_right
+            )
+
+        border_bottom = (
+                # Last row
+                border.bottom_left
+                # -2 to account for the corner pieces
+                + border.horizontal * (self.model.with_margin.columns - 2)
+                + border.bottom_right
+            )
+
+        border_side = (
+                # Side
+                ('\n' + border.vertical) * (self.model.with_margin.rows)
+            )
+
+        # Write the border
+        self.add_chars(string=border_top, ptr_preserve=False)
+        self.add_chars(string=border_side, ptr_preserve=False)  # Left side
+        self.add_chars(string=border_bottom, ptr_preserve=False)
+        # Right side (set area pointer at top_right corner)
+        self.area_ptr.row = 0
+        self.area_ptr.column = self.model.with_margin.top_right.column
+        self.add_chars(string=border_side, ptr_preserve=False)  # Right side
+
+        # Reset pointer
+        self.area_ptr.restriction = self.model.with_padding
+
+    def add_chars(
+            self,
+            string: str,  # string to be added to the area
+            # should new line start at current area pointer column
+            column_preserve: bool = False,
+            ptr_preserve: bool = True  # reset area pointer to initial position
+    ) -> None:
         """Add a string starting from area_ptr. '\n' means row increment
         area_ptr is unaffected
         """
@@ -72,8 +122,9 @@ class Area:
                     .column):
                 self.area_ptr.column += 1
 
-        self.area_ptr.row = initital_coords.row
-        self.area_ptr.column = initital_coords.column
+        if ptr_preserve:
+            self.area_ptr.row = initital_coords.row
+            self.area_ptr.column = initital_coords.column
 
     def _verify_str(self, string: str, column_preserve: bool) -> bool:
         """Verify that string can fit in char_area - used in add_chars"""
