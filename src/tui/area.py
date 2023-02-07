@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import copy
 from typing import TYPE_CHECKING
 
-from tui._coordinates import Coordinates
+from tui._area_box_model import BoxModel
+from tui._coordinates import RestrictedCoordinates, Coordinates
 
 if TYPE_CHECKING:
     from tui.styles.area import AreaInfo
@@ -19,26 +19,28 @@ class Area:
             self,
             area_info: AreaInfo  # min, max rows
     ) -> None:
-        self._rows: int = area_info.rows
-        self._columns: int = area_info.columns
+        self.model = BoxModel(info=area_info)
         self.char_area: list[list[str]] = [  # rows x columns
-                [' ' for _ in range(self._columns)]
-                for _ in range(self._rows)
-            ]
-
-        # is True where char_area is being occupied
-        self.occupied_area: list[list[bool]] = [  # rows x columns
-                [False for _ in range(self._columns)]
-                for _ in range(self._rows)
+                [' ' for _ in range(self.columns)]
+                for _ in range(self.rows)
             ]
 
         # used for easier char_area editing.
-        self.area_ptr: Coordinates = Coordinates(0, 0)
+        self.area_ptr = RestrictedCoordinates(
+                    _row=0,
+                    _column=0,
+                    _restriction=self.model.with_padding
+                )
 
     def add_chars(self, string: str, column_preserve: bool = False) -> None:
         """Add a string starting from area_ptr. '\n' means row increment
         area_ptr is unaffected
         """
+
+        initital_coords = Coordinates(
+                    _row=self.area_ptr.row,
+                    _column=self.area_ptr.column
+                )
 
         if not self._verify_str(
                 string=string,
@@ -46,22 +48,32 @@ class Area:
         ):
             raise IndexError("String is too large")
 
-        # make sure area_ptr isn't mutated
-        temp_ptr = copy.deepcopy(self.area_ptr)
-
-        for char in string:
+        for count, char in enumerate(string):
             if char == '\n':
-                temp_ptr.row += 1
+                # if area_ptr is on the last row and the last char is a newline
+                # area_ptr restriction would activate, hence the latter check
+                if count >= len(string) - 1:
+                    break
+
+                self.area_ptr.row += 1
                 if column_preserve:
-                    temp_ptr.column = self.area_ptr.column
+                    self.area_ptr.column = initital_coords.column
                 else:
-                    temp_ptr.column = 0
+                    self.area_ptr.column = (
+                            self.area_ptr.restriction.top_left.column
+                        )
 
                 continue
 
-            self.char_area[temp_ptr.row][temp_ptr.column] = char
-            self.occupied_area[temp_ptr.row][temp_ptr.column] = True
-            temp_ptr.column += 1
+            self.char_area[self.area_ptr.row][self.area_ptr.column] = char
+
+            # Required to prevent RestrictedCoordinates exception
+            if (self.area_ptr.column < self.area_ptr.restriction.bottom_right
+                    .column):
+                self.area_ptr.column += 1
+
+        self.area_ptr.row = initital_coords.row
+        self.area_ptr.column = initital_coords.column
 
     def _verify_str(self, string: str, column_preserve: bool) -> bool:
         """Verify that string can fit in char_area - used in add_chars"""
@@ -74,11 +86,12 @@ class Area:
                 if column_preserve:
                     column = self.area_ptr.column
                 else:
-                    column = 0
+                    column = self.area_ptr.restriction.top_left.column
 
                 continue
 
-            if row >= self.rows or column >= self.columns:
+            if (row >= self.area_ptr.restriction.rows or
+                    column >= self.area_ptr.restriction.columns):
                 return False
 
             column += 1
@@ -93,27 +106,19 @@ class Area:
     @property
     def rows(self) -> int:
         """Get the rows in the area"""
-        return self._rows
+        return self.model.info.rows
 
     @property
     def columns(self) -> int:
         """Get the columns in the area"""
-        return self._columns
+        return self.model.info.columns
 
     @rows.setter
     def rows(self, rows: int) -> None:
         """Set the rows in the area"""
-        if rows < 0:
-            raise ValueError("Rows cannot be negative")
-
-        self._rows = rows
-        # TODO: resize char_area
+        raise NotImplementedError
 
     @columns.setter
     def columns(self, columns: int) -> None:
         """Set the columns in the area"""
-        if columns < 0:
-            raise ValueError("Columns cannot be negative")
-
-        self._columns = columns
-        # TODO: resize char_area
+        raise NotImplementedError
