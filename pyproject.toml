@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tui"
-version = "0.6.2"
+version = "0.7.0"
 description = "Framework for creating text user interfaces"
 authors = [
         {name="Ivaylo Genchev", email="ivo.genchev4@gmail.com"}
