@@ -36,10 +36,15 @@ class Coordinates:
         self._column = column
 
 
-@dataclass
+@dataclass(init=False)
 class RestrictedCoordinates(Coordinates):
     """Coordinates that can't go out of rectangular bounds"""
     _restriction: Rectangle
+
+    def __init__(self, _row: int, _column: int, _restriction: Rectangle):
+        self.restriction = _restriction
+        self.row = _row
+        self.column = _column
 
     def reset_coords(self) -> None:
         """Reset coordinates to the start of the rectangle"""

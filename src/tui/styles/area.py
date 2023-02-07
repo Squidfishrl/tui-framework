@@ -10,8 +10,8 @@ class AreaInfo:
         margin offset
         padding offset
     """
-    rows: int = 0
-    columns: int = 0
+    rows: int = 1
+    columns: int = 1
 
     margin_top: int = 0
     margin_bottom: int = 0
