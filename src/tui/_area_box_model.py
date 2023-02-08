@@ -54,14 +54,11 @@ class BoxModel:
         self.with_margin: Rectangle = self.area_rect.inner_rect(
                     top_offset=info.margin_top,
                     bottom_offset=info.margin_bottom,
-                    left_offset=info.margin_right,
+                    left_offset=info.margin_left,
                     right_offset=info.margin_right
                 )
 
         # Accessible area after border is applied
-
-        # TODO: check if area should have a border
-        # self.with_border: Rectangle = self.with_margin.inner_rect(1,1,1,1)
         self.with_border: Rectangle = self.with_margin.inner_rect(0, 0, 0, 0)
 
         # Accessible area after padding is applied

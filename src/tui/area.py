@@ -16,6 +16,7 @@ class Area:
     """Area for the component when it's rendered
     Defines how the component looks in isolation (without parents)
     """
+    # TODO: methods to add margin and padding after initialization
     def __init__(
             self,
             area_info: AreaInfo,  # min, max rows
@@ -31,7 +32,8 @@ class Area:
         self.area_ptr = RestrictedCoordinates(
                     _row=0,
                     _column=0,
-                    _restriction=self.model.with_padding
+                    _restriction=self.model.with_padding,
+                    relative=True
                 )
 
         self.add_border(border)
@@ -53,7 +55,7 @@ class Area:
 
         border_bottom = (
                 # Last row
-                border.bottom_left
+                '\n' + border.bottom_left
                 # -2 to account for the corner pieces
                 + border.horizontal * (self.model.with_margin.columns - 2)
                 + border.bottom_right
@@ -61,19 +63,21 @@ class Area:
 
         border_side = (
                 # Side
-                ('\n' + border.vertical) * (self.model.with_margin.rows)
+                # -2 to account for the corner pieces
+                ('\n' + border.vertical) * (self.model.with_margin.rows - 2)
             )
 
         # Write the border
-        self.add_chars(string=border_top, ptr_preserve=False)
+        self.add_chars(string=border_top)
         self.add_chars(string=border_side, ptr_preserve=False)  # Left side
-        self.add_chars(string=border_bottom, ptr_preserve=False)
-        # Right side (set area pointer at top_right corner)
-        self.area_ptr.row = 0
-        self.area_ptr.column = self.model.with_margin.top_right.column
-        self.add_chars(string=border_side, ptr_preserve=False)  # Right side
+        self.add_chars(string=border_bottom)
+        # Right side (set area pointer at top_right corner of restriction)
+        self.area_ptr.row = self.area_ptr.restriction.top_left.row
+        self.area_ptr.column = self.area_ptr.restriction.top_right.column
+        self.add_chars(string=border_side, column_preserve=True)  # Right side
 
         # Reset pointer
+        self.model._set_border(1, 1, 1, 1)
         self.area_ptr.restriction = self.model.with_padding
 
     def add_chars(
@@ -91,6 +95,11 @@ class Area:
                     _row=self.area_ptr.row,
                     _column=self.area_ptr.column
                 )
+
+        print(initital_coords)
+        print(self.area_ptr.restriction.top_left)
+        print(self.area_ptr.restriction.bottom_right)
+        print("\n")
 
         if not self._verify_str(
                 string=string,
@@ -125,19 +134,26 @@ class Area:
         if ptr_preserve:
             self.area_ptr.row = initital_coords.row
             self.area_ptr.column = initital_coords.column
+        else:
+            # column is incremented one last time after adding the last char
+            # this can force area_ptr to go out of bounds
+            # FIXME: it still should with no box model
+            # hence returning the pointer 1 back
+            self.area_ptr.column -= 1
 
     def _verify_str(self, string: str, column_preserve: bool) -> bool:
         """Verify that string can fit in char_area - used in add_chars"""
-        row = self.area_ptr.row
-        column = self.area_ptr.column
+        row = self.area_ptr.get_relative_coords().row
+        column = self.area_ptr.get_relative_coords().column
+        print(row, column)
 
         for char in string:
             if char == '\n':
                 row += 1
                 if column_preserve:
-                    column = self.area_ptr.column
+                    column = self.area_ptr.get_relative_coords().column
                 else:
-                    column = self.area_ptr.restriction.top_left.column
+                    column = 0  # relative 0 to restriction
 
                 continue
 
