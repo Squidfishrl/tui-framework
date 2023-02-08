@@ -41,15 +41,34 @@ class RestrictedCoordinates(Coordinates):
     """Coordinates that can't go out of rectangular bounds"""
     _restriction: Rectangle
 
-    def __init__(self, _row: int, _column: int, _restriction: Rectangle):
+    def __init__(
+            self,
+            _row: int,
+            _column: int,
+            _restriction: Rectangle,
+            # Are _row and _column relative to the restriction rectangle
+            relative: bool = False
+    ):
         self.restriction = _restriction
-        self.row = _row
-        self.column = _column
+
+        if relative:
+            self.row = _row + self.restriction.top_left.row
+            self.column = _column + self.restriction.top_left.column
+        else:
+            self.row = _row
+            self.column = _column
 
     def reset_coords(self) -> None:
         """Reset coordinates to the start of the rectangle"""
         self.row = self.restriction.top_left.row
         self.column = self.restriction.top_left.column
+
+    def get_relative_coords(self) -> Coordinates:
+        """Get coordinates relative to the restriction rectangle"""
+        return Coordinates(
+                    _row=self.row - self.restriction.top_left.row,
+                    _column=self.column - self.restriction.top_left.column
+                )
 
     @property
     def restriction(self) -> Rectangle:

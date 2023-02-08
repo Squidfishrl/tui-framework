@@ -13,7 +13,7 @@ lint: flake8 pylint
 
 .PHONY: flake8 
 flake8:
-	flake8 $(TEST) $(SRC)
+	flake8 $(TEST) $(SRC) --per-file-ignore $(TEST)/test_area.py:W293,W291
 
 .PHONY: pylint
 pylint:
