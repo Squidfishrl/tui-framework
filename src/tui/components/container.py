@@ -13,7 +13,7 @@ class Container(Component):
             self,
             *children: Component,  # Child components
             identifier: str | None = None,  # Unique identifier
-            style: Style = Style()  # Style properties for the component
+            style: str | Style = Style()  # Style properties for the component
     ) -> None:
         super().__init__(identifier=identifier, style=style)
 

@@ -76,8 +76,8 @@ class Style:
         return attribute_map
 
     @staticmethod
-    def str_to_style(string: str) -> Style:
-        """Convert a string to style"""
+    def fromstr(string: str) -> Style:
+        """Create a style from a string"""
         if not re.fullmatch(Style.__validate_str_pattern, string):
             raise ValueError("Invalid string format")
 
@@ -96,10 +96,20 @@ class Style:
             # change it's value
             if attr in new_style._attribute_map:
                 style_type = getattr(new_style, new_style._attribute_map[attr])
-                if type(getattr(style_type, attr)) is int:
-                    setattr(style_type, attr, int(val))
-                else:
-                    setattr(style_type, attr, val)
+                match getattr(style_type, attr):
+                    case bool():
+                        if val == "True":
+                            setattr(style_type, attr, True)
+                        elif val == "False":
+                            setattr(style_type, attr, False)
+                        else:
+                            raise ValueError(
+                                    f"Invalid value {val} for attribute {attr}"
+                                )
+                    case int():
+                        setattr(style_type, attr, int(val))
+                    case str():
+                        setattr(style_type, attr, val)
             else:
                 raise ValueError(f"Attribute '{attr}' doesn't exist")
 
