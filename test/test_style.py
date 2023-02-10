@@ -24,3 +24,18 @@ def test_style_from_string_with_invalid_value():
     """Test that an exception is raised when an invalid value is passed"""
     with pytest.raises(ValueError):
         _ = Style.fromstr("rows=rows")
+
+
+def test_get_style_value():
+    """Test that a style value is fetched correctly, given its attribute
+    name"""
+    style = Style.fromstr("rows=4, columns=7, inline=True")
+    assert style.get_value("rows") == 4
+
+
+def test_get_style_value_with_invalid_attribute():
+    """Test that a style value is fetched correctly, given its attribute
+    name"""
+    style = Style.fromstr("rows=4, columns=7, inline=True")
+    with pytest.raises(ValueError):
+        style.get_value("random")

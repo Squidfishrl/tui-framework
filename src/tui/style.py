@@ -51,8 +51,16 @@ class Style:
 )* # repeat group for every pair
 """, re.VERBOSE)
 
-    # attribute-name: style-type pair
+    # attribute_name: style_type pair
     _attribute_map: ClassVar[dict[str, str]]
+
+    def get_value(self, attribute_name: str) -> int | str | bool:
+        """Get a value, given its attribute name"""
+        if attribute_name not in self._attribute_map:
+            raise ValueError(f"Attribute '{attribute_name}' doesn't exist")
+
+        style_type = getattr(self, self._attribute_map[attribute_name])
+        return getattr(style_type, attribute_name)
 
     @staticmethod
     def _generate_attribute_map() -> dict[str, str]:
