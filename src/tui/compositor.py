@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import copy
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from tui._coordinates import Coordinates, Rectangle, CoordinateError
 from tui.component import Area
@@ -36,8 +36,8 @@ class Compositor:
 
         new_area = copy.deepcopy(root.area)
 
-        # the rectanhle the previous child was in
-        prev_rect: None | Rectangle = None
+        # the rectangle the previous child was in
+        prev_rect: Optional[Rectangle] = None
 
         for child in root.children:
             try:
@@ -53,8 +53,10 @@ class Compositor:
 
             # recursion ends when there are no more children
             child_area = Compositor.compose(child)
-            new_area.area_ptr.row = prev_rect.top_left.row
-            new_area.area_ptr.column = prev_rect.top_left.column
+            new_area.area_ptr.row = (prev_rect.top_left.row 
+                    + new_area.model.with_padding.top_left.row)
+            new_area.area_ptr.column = (prev_rect.top_left.column 
+                    + new_area.model.with_padding.top_left.column)
 
             # draw child component
             try:
@@ -70,10 +72,10 @@ class Compositor:
     def _get_next_rectangle(
             parent: Component,  # the parent component this one will reside in
             component: Component,  # the component calculations are done for
-            prev_rect: None | Rectangle = None  # rect for the prev component
+            prev_rect: Optional[Rectangle] = None
     ) -> Rectangle:
         """Helper function that decides where components are placed when
-        compositioning"""
+        compositing"""
         if parent.style.compositor_info.inline:
             return Compositor.__get_next_rectangle_inline(
                     parent=parent,
@@ -91,7 +93,7 @@ class Compositor:
     def __get_next_rectangle_inline(
             parent: Component,  # the parent component this one will reside in
             component: Component,  # the component calculations are done for
-            prev_rect: None | Rectangle = None  # rect for the prev component
+            prev_rect: Optional[Rectangle] = None  # rect for the prev component
     ) -> Rectangle:
         """Helper function for inline compositing. Returns the area the next
         component should be placed in
@@ -124,18 +126,19 @@ class Compositor:
     def __get_next_rectangle_block(
             parent: Component,  # the parent component this one will reside in
             component: Component,  # the component calculations are done for
-            prev_rect: None | Rectangle = None  # rect for the prev component
+            prev_rect: Optional[Rectangle] = None
     ) -> Rectangle:
         """Helper function for block compositing. Returns the area the next
         component should be placed in
 
         Default prev_rectangle is a rectangle outside of the parent's area
-        that's derrived to place the component in the top left of the parent
+        that's derived to place the component in the top left of the parent
         component's area:
             top_left:  row = -1 && column <= 0
             bottom_right:  row >= -1 && column = 0
         """
         if prev_rect is None:
+            # return parent.area.model.with_padding 
             prev_rect = Rectangle(
                     top_left=Coordinates(_row=-1, _column=0),
                     bottom_right=Coordinates(_row=-1, _column=0)

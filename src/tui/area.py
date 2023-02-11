@@ -96,11 +96,6 @@ class Area:
                     _column=self.area_ptr.column
                 )
 
-        print(initital_coords)
-        print(self.area_ptr.restriction.top_left)
-        print(self.area_ptr.restriction.bottom_right)
-        print("\n")
-
         if not self._verify_str(
                 string=string,
                 column_preserve=column_preserve

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import re
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from tui.styles.area import AreaInfo
 from tui.styles.colour import ColourInfo
@@ -54,13 +54,20 @@ class Style:
     # attribute_name: style_type pair
     _attribute_map: ClassVar[dict[str, str]]
 
-    def get_value(self, attribute_name: str) -> int | str | bool:
+    def get_value(self, attribute_name: str) -> Any:
         """Get a value, given its attribute name"""
         if attribute_name not in self._attribute_map:
             raise ValueError(f"Attribute '{attribute_name}' doesn't exist")
 
         style_type = getattr(self, self._attribute_map[attribute_name])
         return getattr(style_type, attribute_name)
+
+    def set_value(self, attribute_name: str, value: Any) -> None:
+        if attribute_name not in self._attribute_map:
+            raise ValueError(f"Attribute '{attribute_name}' doesn't exist")
+
+        style_type = getattr(self, self._attribute_map[attribute_name])
+        setattr(style_type, attribute_name, value)
 
     @staticmethod
     def _generate_attribute_map() -> dict[str, str]:
@@ -75,8 +82,15 @@ class Style:
             # iterate over attributes of individual styles
             # dummy class instance is required
             for attr in getattr(Style(), style_name).__annotations__.keys():
-                if attr.startswith('_'):
+                if "__" in attr:
                     continue
+
+                # Since @property is ignored, styles with @property must
+                # define a variable with the name of the property and
+                # a leading udnerscore
+                if attr.startswith('_'):
+                    # trim the underscore to match the property name
+                    attr = attr[1:]
 
                 attribute_map[attr] = style_name
 

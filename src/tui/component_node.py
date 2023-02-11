@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from tui._node_list import NodeList
 
@@ -12,20 +13,20 @@ class CMNode(ABC):
 
     def __init__(
             self,
-            identifier: str | None = None,  # unique id for the node
-            name: str | None = None  # for debug readability
+            identifier: Optional[str] = None,  # unique id for the node
+            name: Optional[str] = None  # for debug readability
     ) -> None:
         self.__id = identifier
         self.__name = name
         self.__children: NodeList = NodeList()
 
     @property
-    def id(self) -> str | None:
+    def id(self) -> Optional[str]:
         """Get the id of the node"""
         return self.__id
 
     @property
-    def name(self) -> str | None:
+    def name(self) -> Optional[str]:
         """Get the name of this node"""
         return self.__name
 

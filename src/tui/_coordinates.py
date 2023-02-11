@@ -43,7 +43,7 @@ class RestrictedCoordinates(Coordinates):
 
     def __init__(
             self,
-            _row: int,
+            _row: int, 
             _column: int,
             _restriction: Rectangle,
             # Are _row and _column relative to the restriction rectangle

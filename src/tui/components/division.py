@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from tui.components.container import Container
 from tui.style import Style
@@ -16,7 +16,7 @@ class Division(Container):
     def __init__(
             self,
             *children: Component,  # Child components
-            identifier: str | None = None,  # Unique identifier
+            identifier: Optional[str] = None,  # Unique identifier
             style: str | Style = Style()  # Style properties for the component
     ) -> None:
         super().__init__(

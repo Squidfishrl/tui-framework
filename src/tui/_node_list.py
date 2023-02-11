@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from _collections_abc import Sequence
 
 if TYPE_CHECKING:
@@ -23,7 +23,7 @@ class NodeList(Sequence):
     def __len__(self) -> int:
         return len(self._nodes_list)
 
-    def __getitem__(self, index: int | slice) -> Component:
+    def __getitem__(self, index: int | slice) -> Component | list[Component]:
         return self._nodes_list[index]
 
     def __setitem__(self, index: int, new_component: Component) -> None:
@@ -38,17 +38,17 @@ class NodeList(Sequence):
     def __contains__(self, component: Component) -> bool:
         return component in self._nodes_list
 
-    def get_component_with_id(self, identifier: str) -> Component | None:
+    def get_component_with_id(self, identifier: str) -> Optional[Component]:
         """Get component (search by id)"""
         return self._nodes_dict.get(identifier)
 
     def append(self, component: Component) -> None:
         """Add component at the end of the list"""
         if component in self._nodes_list:
-            raise ValueError("Component exists already")
+            raise ValueError("Component already exists")
 
         if component.id in self._nodes_dict:
-            raise KeyError
+            raise KeyError("Id already exists")
 
         self._nodes_list.append(component)
 

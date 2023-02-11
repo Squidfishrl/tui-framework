@@ -2,17 +2,20 @@
 
 from __future__ import annotations
 
+from typing import Any, Optional
+
 from tui.area import Area
 from tui.component_node import CMNode
 from tui.style import Style
+from tui.styles.border import Border
 
 
 class Component(CMNode):
     """Abstract class for creating TUI elements"""
     def __init__(
             self,
-            identifier: str | None = None,  # Unique identifier
-            name: str | None = None,  # Component's name (for debug)
+            identifier: Optional[str] = None,  # Unique identifier
+            name: Optional[str] = None,  # Component's name (for debug)
             style: str | Style = Style()  # Style properties for the component
     ) -> None:
         if isinstance(style, str):
@@ -22,6 +25,18 @@ class Component(CMNode):
 
         self.__area = Area(self.__style.area_info)
         super().__init__(identifier=identifier, name=name)
+
+    def add_border(self, border: Border) -> None:
+        """Add border to the component"""
+        self.area.add_border(border)
+
+    def set_style(self, attribute_name: str, value: Any) -> None:
+        """Change the value of a style attribute"""
+        self.style.set_value(attribute_name, value)
+
+    def get_style(self, attribute_name: str) -> Any:
+        """Get the value of a style attribute"""
+        self.style.get_value(attribute_name)
 
     @property
     def style(self) -> Style:
@@ -40,5 +55,3 @@ class Component(CMNode):
         # TODO: copy the contents of the old area to the new area
         self.__area = area
 
-    def _add_border(self) -> None:
-        pass
