@@ -63,6 +63,7 @@ class Style:
         return getattr(style_type, attribute_name)
 
     def set_value(self, attribute_name: str, value: Any) -> None:
+        """Set the value of a style attribute"""
         if attribute_name not in self._attribute_map:
             raise ValueError(f"Attribute '{attribute_name}' doesn't exist")
 

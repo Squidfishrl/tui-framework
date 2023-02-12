@@ -53,10 +53,14 @@ class Compositor:
 
             # recursion ends when there are no more children
             child_area = Compositor.compose(child)
-            new_area.area_ptr.row = (prev_rect.top_left.row 
-                    + new_area.model.with_padding.top_left.row)
-            new_area.area_ptr.column = (prev_rect.top_left.column 
-                    + new_area.model.with_padding.top_left.column)
+            new_area.area_ptr.row = (
+                prev_rect.top_left.row
+                + new_area.model.with_padding.top_left.row
+            )
+            new_area.area_ptr.column = (
+                prev_rect.top_left.column
+                + new_area.model.with_padding.top_left.column
+            )
 
             # draw child component
             try:
@@ -93,7 +97,8 @@ class Compositor:
     def __get_next_rectangle_inline(
             parent: Component,  # the parent component this one will reside in
             component: Component,  # the component calculations are done for
-            prev_rect: Optional[Rectangle] = None  # rect for the prev component
+            # rectnalge for the previous component
+            prev_rect: Optional[Rectangle] = None
     ) -> Rectangle:
         """Helper function for inline compositing. Returns the area the next
         component should be placed in
@@ -126,6 +131,7 @@ class Compositor:
     def __get_next_rectangle_block(
             parent: Component,  # the parent component this one will reside in
             component: Component,  # the component calculations are done for
+            # rectnalge for the previous component
             prev_rect: Optional[Rectangle] = None
     ) -> Rectangle:
         """Helper function for block compositing. Returns the area the next
@@ -138,7 +144,6 @@ class Compositor:
             bottom_right:  row >= -1 && column = 0
         """
         if prev_rect is None:
-            # return parent.area.model.with_padding 
             prev_rect = Rectangle(
                     top_left=Coordinates(_row=-1, _column=0),
                     bottom_right=Coordinates(_row=-1, _column=0)

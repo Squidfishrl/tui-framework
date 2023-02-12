@@ -54,4 +54,3 @@ class Component(CMNode):
         to the new area"""
         # TODO: copy the contents of the old area to the new area
         self.__area = area
-
