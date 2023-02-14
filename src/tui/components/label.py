@@ -4,7 +4,7 @@ from typing import Optional
 
 from tui.components.widget import Widget
 from tui.style import Style
-from tui.styles.text import TextAlignment
+from tui.styles.text import TextAlignment, VerticalAlignment
 
 
 class Label(Widget):
@@ -18,11 +18,12 @@ class Label(Widget):
             style: str | Style = Style(),  # Style properties for the component
             label_text: str = ""  # The text that's displayed on the label
     ) -> None:
-        self.text = label_text
         super().__init__(identifier=identifier, style=style)
+        self.text = label_text
 
     def _render_to_area(self) -> None:
         """Render the label's text to its area"""
+        self.area.area_ptr.reset_coords()
         self.area.add_chars(self.text)
 
     @property
@@ -37,22 +38,33 @@ class Label(Widget):
         max_height = self.area.model.with_padding.rows
         lines = []
 
+        # apply text alignment to every line
         for line in new_text.split('\n'):
             if len(line) > max_width:
                 raise ValueError("Text line is too long, cannot fit")
 
             match self.style.get_value("text_align"):
-                case TextAlignment.CENTER:
-                    lines.append(line.center(max_width))
                 case TextAlignment.LEFT:
                     lines.append(line)
+                case TextAlignment.CENTER:
+                    lines.append(line.center(max_width))
                 case TextAlignment.RIGHT:
                     lines.append(f"{line:>{max_width}}")
 
             if len(lines) > max_height:
-                raise ValueError("Too many text lines, cannot fit")
+                raise ValueError("Too many lines, cannot fit")
 
-        self.__text = '\n'.join(lines)
+        # apply vertical alignment
+        remaining_lines = max_height - len(lines)
+        match self.style.get_value("vertical_align"):
+            case VerticalAlignment.TOP:
+                self.__text = '\n'.join(lines)
+            case VerticalAlignment.CENTER:
+                self.__text = '\n' * int(remaining_lines/2) + '\n'.join(lines)
+            case VerticalAlignment.BOTTOM:
+                self.__text = '\n' * remaining_lines + '\n'.join(lines)
+
+        self._render_to_area()
 
     @property
     def children(self) -> None:

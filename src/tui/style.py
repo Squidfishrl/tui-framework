@@ -17,8 +17,8 @@ class Style:
     """Collection of properties that can define the look of a component"""
     area_info: AreaInfo = field(default_factory=AreaInfo)
     compositor_info: CompositorInfo = field(default_factory=CompositorInfo)
-    colour_info: ColourInfo = field(default_factory=ColourInfo)
     text_info: TextInfo = field(default_factory=TextInfo)
+    colour_info: ColourInfo = field(default_factory=ColourInfo)
 
     # validate that string format is correct and can be converted to a style
     __validate_str_pattern: ClassVar[re.Pattern] = re.compile(r"""
@@ -90,14 +90,13 @@ class Style:
 
                 # Since @property is ignored, styles with @property must
                 # define a variable with the name of the property and
-                # a leading udnerscore
+                # a leading underscore
                 if attr.startswith('_'):
                     # trim the underscore to match the property name
                     attr = attr[1:]
 
                 attribute_map[attr] = style_name
 
-        print(attribute_map)
         return attribute_map
 
     @staticmethod
@@ -117,8 +116,8 @@ class Style:
             return new_style
 
         for attr, val in attributes.items():
-            # if attribute name exists get the style it's in and
-            # change it's value
+            # if attribute name exists get the style it's in
+            # also change it's value
             if attr in new_style._attribute_map:
                 style_type = getattr(new_style, new_style._attribute_map[attr])
                 match getattr(style_type, attr):
@@ -134,6 +133,8 @@ class Style:
                     case int():
                         setattr(style_type, attr, int(val))
                     case str():
+                        setattr(style_type, attr, val)
+                    case _:  # custom types are assumed to work with strings
                         setattr(style_type, attr, val)
             else:
                 raise ValueError(f"Attribute '{attr}' doesn't exist")
