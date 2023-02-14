@@ -1,6 +1,7 @@
 """A widget that can hold text which can be modified at runtime"""
 
 from typing import Optional
+import re
 
 from tui.components.widget import Widget
 from tui.style import Style
@@ -36,23 +37,34 @@ class Label(Widget):
         """Set the label's text"""
         max_width = self.area.model.with_padding.columns
         max_height = self.area.model.with_padding.rows
+        wrap_pattern = re.compile("(.{0," + str(max_width) + "})(?: | ?$)")
         lines = []
+
+        cannot_wrap = not self.style.get_value("text_wrap")
+        print(cannot_wrap)
 
         # apply text alignment to every line
         for line in new_text.split('\n'):
-            if len(line) > max_width:
+            if len(line) > max_width * max_height:
                 raise ValueError("Text line is too long, cannot fit")
 
-            match self.style.get_value("text_align"):
-                case TextAlignment.LEFT:
-                    lines.append(line)
-                case TextAlignment.CENTER:
-                    lines.append(line.center(max_width))
-                case TextAlignment.RIGHT:
-                    lines.append(f"{line:>{max_width}}")
+            if cannot_wrap and len(line) > max_width:
+                raise ValueError("Text line is too long, cannot fit")
 
-            if len(lines) > max_height:
-                raise ValueError("Too many lines, cannot fit")
+            wrapped_lines = re.findall(wrap_pattern, line)[:-1]
+            print(wrapped_lines)
+            for _line in wrapped_lines:
+                # align text horizontally
+                match self.style.get_value("text_align"):
+                    case TextAlignment.LEFT:
+                        lines.append(_line)
+                    case TextAlignment.CENTER:
+                        lines.append(_line.center(max_width))
+                    case TextAlignment.RIGHT:
+                        lines.append(f"{_line:>{max_width}}")
+
+                if len(lines) > max_height:
+                    raise ValueError("Too many lines, cannot fit")
 
         # apply vertical alignment
         remaining_lines = max_height - len(lines)

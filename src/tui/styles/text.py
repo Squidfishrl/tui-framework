@@ -24,6 +24,7 @@ class TextInfo:
     """Define properties for component colouring"""
     text_colour: str = Colour.Fore.WHITE
     text_background: str = Colour.Back.BLACK
+    text_wrap: bool = True
 
     # tell Style that there's a _text_align property
     _text_align: TextAlignment = TextAlignment.LEFT

@@ -107,3 +107,35 @@ def test_label_absolute_center_multiline_text():
           
           \
 """
+
+
+def test_label_wrap_lines():
+    """Test that label text can wrap lines"""
+    lbl = Label(
+            style="rows=5, columns=5, text_wrap=True",
+            label_text="Hello Hello World"
+        )
+    assert str(lbl.area) == """\
+Hello
+Hello
+World
+     
+     \
+"""
+
+
+def test_label_wrap_lines_advanced():
+    """Test that label text can wrap lines with a lot of words"""
+    lbl = Label(
+            style="rows=5, columns=20, text_wrap=True",
+            label_text="""\
+I am testing label wrapping, it should also be valid to call it label warping?
+"""
+    )
+    assert str(lbl.area) == """\
+I am testing label  
+wrapping, it should 
+also be valid to    
+call it label       
+warping?            \
+"""
