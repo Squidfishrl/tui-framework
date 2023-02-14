@@ -9,6 +9,7 @@ from typing import Any, ClassVar
 from tui.styles.area import AreaInfo
 from tui.styles.colour import ColourInfo
 from tui.styles.compositor import CompositorInfo
+from tui.styles.text import TextInfo
 
 
 @dataclass
@@ -17,6 +18,7 @@ class Style:
     area_info: AreaInfo = field(default_factory=AreaInfo)
     compositor_info: CompositorInfo = field(default_factory=CompositorInfo)
     colour_info: ColourInfo = field(default_factory=ColourInfo)
+    text_info: TextInfo = field(default_factory=TextInfo)
 
     # validate that string format is correct and can be converted to a style
     __validate_str_pattern: ClassVar[re.Pattern] = re.compile(r"""

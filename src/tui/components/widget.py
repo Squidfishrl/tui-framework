@@ -2,6 +2,7 @@
 functionality - a button, label..
 """
 
+from abc import abstractmethod
 from typing import Optional
 
 from tui.component import Component
@@ -16,6 +17,10 @@ class Widget(Component):
             style: str | Style = Style()  # Style properties for the component
     ) -> None:
         super().__init__(identifier=identifier, style=style)
+
+    @abstractmethod
+    def _render_to_area(self) -> None:
+        """Render the component's content to its area"""
 
     @property
     def children(self) -> None:
