@@ -6,7 +6,7 @@ all: test lint
 
 .PHONY: test
 test:
-	PYTHONPATH=. pytest ./test -vv
+	PYTHONPATH=. pytest ./test -vv --cov-report term --cov=./src/tui
 
 .PHONY: lint
 lint: flake8 pylint

@@ -30,7 +30,7 @@ class Label(Widget):
     @property
     def text(self) -> str:
         """Get the label's text"""
-        return self.__text
+        return self._text
 
     @text.setter
     def text(self, new_text: str) -> None:
@@ -41,7 +41,6 @@ class Label(Widget):
         lines = []
 
         cannot_wrap = not self.style.get_value("text_wrap")
-        print(cannot_wrap)
 
         # apply text alignment to every line
         for line in new_text.split('\n'):
@@ -52,7 +51,6 @@ class Label(Widget):
                 raise ValueError("Text line is too long, cannot fit")
 
             wrapped_lines = re.findall(wrap_pattern, line)[:-1]
-            print(wrapped_lines)
             for _line in wrapped_lines:
                 # align text horizontally
                 match self.style.get_value("text_align"):
@@ -70,11 +68,11 @@ class Label(Widget):
         remaining_lines = max_height - len(lines)
         match self.style.get_value("vertical_align"):
             case VerticalAlignment.TOP:
-                self.__text = '\n'.join(lines)
+                self._text = '\n'.join(lines)
             case VerticalAlignment.CENTER:
-                self.__text = '\n' * int(remaining_lines/2) + '\n'.join(lines)
+                self._text = '\n' * int(remaining_lines/2) + '\n'.join(lines)
             case VerticalAlignment.BOTTOM:
-                self.__text = '\n' * remaining_lines + '\n'.join(lines)
+                self._text = '\n' * remaining_lines + '\n'.join(lines)
 
         self._render_to_area()
 

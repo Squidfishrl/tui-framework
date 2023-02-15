@@ -140,7 +140,6 @@ class Area:
         """Verify that string can fit in char_area - used in add_chars"""
         row = self.area_ptr.get_relative_coords().row
         column = self.area_ptr.get_relative_coords().column
-        print(row, column)
 
         for char in string:
             if char == '\n':
