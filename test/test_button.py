@@ -57,8 +57,22 @@ async def test_button_on_click_multiple_decorators_multiple_parameters():
     btn1 = Button()
     btn2 = Button()
 
-    # @btn1.on_click(button=btn1, char='1')
-    # @btn1.on_click(button=btn2, char='2')
+    @btn1.on_click(button=btn1, char='1')
+    @btn1.on_click(button=btn2, char='2')
+    def change_btn_text(button: Button, char: str) -> None:
+        button.text = char
+
+    await btn1.click_signal()
+    assert btn1.text == '1' and btn2.text == '2'
+
+
+@pytest.mark.asyncio
+async def test_button_on_click_multiple_calls_multiple_parameters():
+    """Test that on_click event executes 2 callback functions when there are
+    2 decorators in their function syntax, each taking multiple parameters"""
+    btn1 = Button()
+    btn2 = Button()
+
     def change_btn_text(button: Button, char: str) -> None:
         button.text = char
 

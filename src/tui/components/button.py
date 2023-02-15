@@ -4,7 +4,6 @@ functionalities that the label widget has."""
 
 from __future__ import annotations
 
-import functools
 from typing import Any, Awaitable, Callable, Optional, Protocol
 
 from tui.components.label import Label
@@ -30,16 +29,21 @@ class Button(Label):
 
     def on_click(self, *_args: Any, **_kwargs: Any):
         """Pass arguments to the on_click decorator"""
-        def decorator_onclick(func: Callback) -> Callable[[], Awaitable[None]]:
-            """Subscribe a function to the on_click event and make it async"""
-            @functools.wraps(func)
-            async def wrapper(*args: Any, **kwargs: Any) -> None:
-                """Async wrapper that passes parameters to func"""
-                args = _args
-                kwargs = _kwargs
+        def decorator_onclick(func: Callback) -> Callable[[], None]:
+            """Subscribe a function with set parameters to the on_click event
+            while making sure it's async"""
+            def wrapper(*args: Any, **kwargs: Any) -> None:
+                """Regular wrapper - makes chaining multiple decorators not
+                interfere with eachother"""
                 return func(*args, **kwargs)
-            # add the function to the subscriber list
-            self._on_click.append(wrapper)
+
+            async def async_param_wrapper() -> None:
+                """Async wrapper with fixed function parameters"""
+                return func(*_args, **_kwargs)
+
+            # add the function with pre-set parameters
+            self._on_click.append(async_param_wrapper)
+            # return the basic non-modified function wrapper
             return wrapper
         return decorator_onclick
 
