@@ -1,5 +1,10 @@
-"""Abstract component that can't hold other components and should focus on
-functionality - a button, label..
+"""
+The widget is an abstract component which cannot have child components. It can
+override the default response to most events and should focus on providing some
+functionality. Some examples of pure widgets are - labels, buttons and input
+fields. If you're looking to define custom widgets, you may need to inherit
+from both the Widget and the Container class. An example would be bundling
+2 input fields and a button inside a division to make a 'login form'.
 """
 
 from abc import abstractmethod
@@ -10,11 +15,12 @@ from tui.style import Style
 
 
 class Widget(Component):
-    """Abstract component that can't hold other components"""
+    """An abstract component that can't hold other components and can override
+    signal behaviour."""
     def __init__(
             self,
+            style: str | Style = Style(),  # Style properties for the component
             identifier: Optional[str] = None,  # Unique identifier
-            style: str | Style = Style()  # Style properties for the component
     ) -> None:
         super().__init__(identifier=identifier, style=style)
 

@@ -1,4 +1,9 @@
-"""Structure to store the 2d coordinates"""
+"""
+This file provides an abstraction for coordinate based structures.
+Coordinates - basic 2d coordinates (row and column)
+RestrictedCoordinates - Coordinates that can't go out of a rectangular bound
+Rectangle - A pair of Coordinates defining a rectangle
+"""
 
 from __future__ import annotations
 
@@ -11,7 +16,7 @@ class CoordinateError(ValueError):
 
 @dataclass
 class Coordinates:
-    """Structure for containing mutable coordinates"""
+    """Structure for containing mutable 2D coordinates"""
     _row: int
     _column: int
 

@@ -4,13 +4,14 @@ import pytest
 from tui.compositor import Compositor, InsufficientAreaError
 from tui.components.division import Division
 from tui.style import Style, AreaInfo
+from tui.styles.compositor import Orientation
 
 
 @pytest.fixture
 def ten_by_ten_div():
     """Return a division with 10 rows and ten columns"""
     style = Style(area_info=AreaInfo(columns=10, rows=10))
-    style.compositor_info.inline = True
+    style.compositor_info.display = Orientation.INLINE
     return Division(identifier="div1", style=style)
 
 
@@ -18,7 +19,7 @@ def ten_by_ten_div():
 def three_by_ten_divs():
     """Return a division with 10 rows and 3 columns"""
     style = Style(area_info=AreaInfo(columns=3, rows=10))
-    style.compositor_info.inline = True
+    style.compositor_info.display = Orientation.INLINE
     divs = []
 
     for identifier in range(4):
@@ -62,11 +63,11 @@ def test_compose_one_child(
 ):
     """Test that one child is composed correctly without column/row expansion
     """
-    ten_by_ten_div._Component__area = Compositor.fill_area(
+    ten_by_ten_div.area = Compositor.fill_area(
             ten_by_ten_div,
             symbol="+"
         )
-    three_by_ten_divs[0]._Component__area = Compositor.fill_area(
+    three_by_ten_divs[0].area = Compositor.fill_area(
             three_by_ten_divs[0],
             symbol="*"
         )
@@ -91,16 +92,16 @@ def test_compose_two_child(
         ten_by_ten_div: Division
 ):
     """Test that two children are composed correctly"""
-    ten_by_ten_div._area = Compositor.fill_area(
+    ten_by_ten_div.area = Compositor.fill_area(
             ten_by_ten_div,
             symbol="+"
         )
-    three_by_ten_divs[0]._area = Compositor.fill_area(
+    three_by_ten_divs[0].area = Compositor.fill_area(
             three_by_ten_divs[0],
             symbol="*"
         )
 
-    three_by_ten_divs[1]._area = Compositor.fill_area(
+    three_by_ten_divs[1].area = Compositor.fill_area(
             three_by_ten_divs[1],
             symbol="#"
         )
@@ -144,19 +145,19 @@ def test_compose_one_child_which_has_one_child(
     correctly"""
 
     ten_by_ten_div.append_child(three_by_ten_divs[0])
-    ten_by_ten_div._area = Compositor.fill_area(
+    ten_by_ten_div.area = Compositor.fill_area(
             ten_by_ten_div,
             symbol=str("+")
         )
 
     three_by_ten_divs[0].append_child(one_by_ten_divs[0])
 
-    three_by_ten_divs[0]._area = Compositor.fill_area(
+    three_by_ten_divs[0].area = Compositor.fill_area(
             three_by_ten_divs[0],
             symbol=str("*")
         )
 
-    one_by_ten_divs[0]._area = Compositor.fill_area(
+    one_by_ten_divs[0].area = Compositor.fill_area(
             one_by_ten_divs[0],
             symbol=str("#")
         )
@@ -183,7 +184,7 @@ def test_compose_children_which_have_children(
     """Test that a component with 3 children, which each have 3 children, is
     composed correctly"""
 
-    ten_by_ten_div._area = Compositor.fill_area(
+    ten_by_ten_div.area = Compositor.fill_area(
             ten_by_ten_div,
             symbol=str("+")
         )
@@ -194,24 +195,24 @@ def test_compose_children_which_have_children(
         for _ in range(3):
             three_by_ten_divs[i].append_child(one_by_ten_divs[nested_children])
 
-            one_by_ten_divs[nested_children]._area = Compositor.fill_area(
+            one_by_ten_divs[nested_children].area = Compositor.fill_area(
                     one_by_ten_divs[nested_children],
                     symbol=str(nested_children)
                 )
 
             nested_children += 1
 
-    three_by_ten_divs[0]._area = Compositor.fill_area(
+    three_by_ten_divs[0].area = Compositor.fill_area(
             three_by_ten_divs[0],
             symbol=str("*")
         )
 
-    three_by_ten_divs[1]._area = Compositor.fill_area(
+    three_by_ten_divs[1].area = Compositor.fill_area(
             three_by_ten_divs[1],
             symbol=str("#")
         )
 
-    three_by_ten_divs[2]._area = Compositor.fill_area(
+    three_by_ten_divs[2].area = Compositor.fill_area(
             three_by_ten_divs[2],
             symbol=str("@")
         )

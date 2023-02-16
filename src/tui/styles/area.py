@@ -1,11 +1,12 @@
-"""Describe area parameters"""
+"""This substyle describes the area box-model, as well as the component's
+size."""
 
 from dataclasses import dataclass
 
 
 @dataclass
 class AreaInfo:
-    """Define properties for a component's area:
+    """Defines properties for a component's area:
         size
         margin offset
         padding offset

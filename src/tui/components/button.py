@@ -16,11 +16,11 @@ class Callback(Protocol):
 
 
 class Button(Label):
-    """A widget which executes a function when it's signaled"""
+    """A widget (label) which executes a function when it's signaled"""
     def __init__(
             self,
-            identifier: Optional[str] = None,  # Unique identifier
             style: str | Style = Style(),  # Style properties for the component
+            identifier: Optional[str] = None,  # Unique identifier
             text: str = "",  # The text that's displayed on the button
     ) -> None:
         super().__init__(identifier=identifier, style=style, label_text=text)

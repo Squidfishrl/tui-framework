@@ -1,4 +1,34 @@
-"""Handle a 2d char matrix with the area box model specification"""
+"""
+The area box model tells the area within what rectangular bounds should the
+component's content be placed in. The box model is entirely similar to the CSS
+box model:
+
+    Area
+    +--------------------------------------------------------+
+    |                                                        |
+    |    Margin                                              |
+    |    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    |
+    |    x                                              x    |
+    |    x    Border                                    x    |
+    |    x    ╔════════════════════════════════════╗    x    |
+    |    x    ║  Padding                           ║    x    |
+    |    x    ║  ++++++++++++++++++++++++++++++++  ║    x    |
+    |    x    ║  +                              +  ║    x    |
+    |    x    ║  +                              +  ║    x    |
+    |    x    ║  +          Content             +  ║    x    |
+    |    x    ║  +                              +  ║    x    |
+    |    x    ║  +                              +  ║    x    |
+    |    x    ║  ++++++++++++++++++++++++++++++++  ║    x    |
+    |    x    ║                                    ║    x    |
+    |    x    ╚════════════════════════════════════╝    x    |
+    |    x                                              x    |
+    |    x                                              x    |
+    |    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    |
+    |                                                        |
+    |                                                        |
+    +--------------------------------------------------------+
+
+"""
 
 from __future__ import annotations
 
@@ -11,33 +41,9 @@ if TYPE_CHECKING:
 
 
 class BoxModel:
-    """
-    Layout model for the area
-    Defines how the component looks like in isolation
-
-    Area Box Model:
-
-    Area
-    +--------------------------------------------------------+
-    |    Margin                                              |
-    |    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    |
-    |    x    Border                                    x    |
-    |    x    ╔════════════════════════════════════╗    x    |
-    |    x    ║  Padding                           ║    x    |
-    |    x    ║  ++++++++++++++++++++++++++++++++  ║    x    |
-    |    x    ║  + Content                      +  ║    x    |
-    |    x    ║  +                              +  ║    x    |
-    |    x    ║  +                              +  ║    x    |
-    |    x    ║  +                              +  ║    x    |
-    |    x    ║  ++++++++++++++++++++++++++++++++  ║    x    |
-    |    x    ║                                    ║    x    |
-    |    x    ╚════════════════════════════════════╝    x    |
-    |    x                                              x    |
-    |    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    |
-    |                                                        |
-    +--------------------------------------------------------+
-
-    """
+    """Responsible for defining the Area Box Model (as multiple rectangles
+    nested within each-other) and handling dynamic changes to it."""
+    # TODO: methods for updating margin and padding
     def __init__(self, info: AreaInfo) -> None:
         self.info = info
 

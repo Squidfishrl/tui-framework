@@ -1,4 +1,9 @@
-"""Area for the component when it's rendered"""
+"""
+The area, at its core, is a 2D matrix of chars, which defines how a component
+should look in isolation (before it's composited). It's a necessary part of
+every component. This is where a lot of behind the scenes heavy lifting is
+done.
+"""
 
 from __future__ import annotations
 
@@ -13,22 +18,24 @@ if TYPE_CHECKING:
 
 
 class Area:
-    """Area for the component when it's rendered
-    Defines how the component looks in isolation (without parents)
-    """
+    """Responsible for rendering how a component should look. This includes
+    the box model and any dynamic changes that may happen within it"""
     # TODO: methods to add margin and padding after initialization
     def __init__(
             self,
-            area_info: AreaInfo,  # min, max rows
+            area_info: AreaInfo,
             border: Optional[Border] = None
     ) -> None:
         self.model = BoxModel(info=area_info)
-        self.char_area: list[list[str]] = [  # rows x columns
+        # char_area is where every change is reflected
+        # rows x columns
+        self.char_area: list[list[str]] = [
                 [' ' for _ in range(self.columns)]
                 for _ in range(self.rows)
             ]
 
-        # used for easier char_area editing.
+        # the area pointer is used for easier navigating and writing to
+        # char_area as it automatically keeps track of a lot of variables
         self.area_ptr = RestrictedCoordinates(
                     _row=0,
                     _column=0,
@@ -39,10 +46,12 @@ class Area:
         self.add_border(border)
 
     def add_border(self, border: Optional[Border]) -> None:
-        """Apply border to the area"""
+        """Apply border to the area. This will reduce the space the component
+        can use depending on border's size"""
         if border is None:
             return
 
+        # apply border between margin and padding
         self.area_ptr.restriction = self.model.with_margin
 
         border_top = (
@@ -87,15 +96,20 @@ class Area:
             column_preserve: bool = False,
             ptr_preserve: bool = True  # reset area pointer to initial position
     ) -> None:
-        """Add a string starting from area_ptr. '\n' means row increment
-        area_ptr is unaffected
+        """
+        Write to char_area starting from area_ptr coordinates. Any '\n' in the
+        string translate to a row increment. Default behaviour doesn't mutate
+        the area pointer.
         """
 
+        # remember initial coordinates (for column preserve and to roll-back
+        # the area pointer)
         initital_coords = Coordinates(
                     _row=self.area_ptr.row,
                     _column=self.area_ptr.column
                 )
 
+        # check if string can fit
         if not self._verify_str(
                 string=string,
                 column_preserve=column_preserve
@@ -121,7 +135,7 @@ class Area:
 
             self.char_area[self.area_ptr.row][self.area_ptr.column] = char
 
-            # Required to prevent RestrictedCoordinates exception
+            # Required check to prevent a RestrictedCoordinates exception
             if (self.area_ptr.column < self.area_ptr.restriction.bottom_right
                     .column):
                 self.area_ptr.column += 1
@@ -137,7 +151,9 @@ class Area:
             self.area_ptr.column -= 1
 
     def _verify_str(self, string: str, column_preserve: bool) -> bool:
-        """Verify that string can fit in char_area - used in add_chars"""
+        """Verify that string can fit in char_area - used in add_chars.
+        It mimics the behaviour of add_char to make sure the string never goes
+        out of bounds."""
         row = self.area_ptr.get_relative_coords().row
         column = self.area_ptr.get_relative_coords().column
 

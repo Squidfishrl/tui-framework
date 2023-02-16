@@ -1,4 +1,9 @@
-"""Node definition creating a DOM-like structure"""
+"""
+Component nodes are a part of a tree structure, which is very DOM-like. Each
+node may have a unique id and any amount of children. Every component should
+inherit the Component node class, with the root component being the head of the
+tree.
+"""
 
 from __future__ import annotations
 
@@ -9,15 +14,14 @@ from tui._node_list import NodeList
 
 
 class CMNode(ABC):
-    """Base object in the model"""
+    """Base object in the model. An abstract class, handling the treelike
+    structure"""
 
     def __init__(
             self,
-            identifier: Optional[str] = None,  # unique id for the node
-            name: Optional[str] = None  # for debug readability
+            identifier: Optional[str] = None,  # Unique node id
     ) -> None:
         self.__id = identifier
-        self.__name = name
         self.__children: NodeList = NodeList()
 
     @property
@@ -26,13 +30,9 @@ class CMNode(ABC):
         return self.__id
 
     @property
-    def name(self) -> Optional[str]:
-        """Get the name of this node"""
-        return self.__name
-
-    @property
     @abstractmethod
     def children(self) -> NodeList:
-        """Return children of this node
-            abstract method since some components may not have children"""
+        """Get the children of this node. It's an abstract method since some
+        components (widgets) may not have children, or the order of the
+        children could be changed."""
         return self.__children

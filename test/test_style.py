@@ -3,14 +3,15 @@
 import pytest
 
 from tui.style import Style
+from tui.styles.compositor import Orientation
 
 
 def test_style_from_string():
     """Test that string is correctly converted to style"""
-    style = Style.fromstr("rows=4, columns=7, inline=True")
+    style = Style.fromstr("rows=4, columns=7, display=inline")
     assert (style.area_info.rows == 4
             and style.area_info.columns == 7
-            and style.compositor_info.inline is True)
+            and style.compositor_info.display is Orientation.INLINE)
 
 
 def test_style_from_string_with_invalid_attribute():
@@ -29,13 +30,13 @@ def test_style_from_string_with_invalid_value():
 def test_get_style_value():
     """Test that a style value is fetched correctly, given its attribute
     name"""
-    style = Style.fromstr("rows=4, columns=7, inline=True")
+    style = Style.fromstr("rows=4, columns=7, display=inline")
     assert style.get_value("rows") == 4
 
 
 def test_get_style_value_with_invalid_attribute():
     """Test that a style value is fetched correctly, given its attribute
     name"""
-    style = Style.fromstr("rows=4, columns=7, inline=True")
+    style = Style.fromstr("rows=4, columns=7, display=inline")
     with pytest.raises(ValueError):
         style.get_value("random")

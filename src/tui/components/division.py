@@ -1,4 +1,4 @@
-"""Container component acting as a diision"""
+"""A division is a container with vertical orientation"""
 
 from __future__ import annotations
 
@@ -12,17 +12,17 @@ if TYPE_CHECKING:
 
 
 class Division(Container):
-    """Container component acting as a div"""
+    """A container with vertical (block) orientation"""
     def __init__(
             self,
-            *children: Component,  # Child components
+            style: str | Style = Style(),  # Style properties for the component
             identifier: Optional[str] = None,  # Unique identifier
-            style: str | Style = Style()  # Style properties for the component
+            *children: Component  # Child components
     ) -> None:
         super().__init__(
-                children,
                 identifier=identifier,
-                style=style
+                style=style,
+                *children
             )
 
     @property

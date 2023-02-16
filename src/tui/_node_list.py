@@ -1,4 +1,9 @@
-"""Internal listing of children components used by the parent component"""
+"""
+The Node List is an ordered sequence of Components (this order matters in
+compositing). Components are hashed by their id (if they have one) and their
+access time is O(1). Each Component Node has a Node List, which is used to
+store its children nodes.
+"""
 
 from __future__ import annotations
 
@@ -10,10 +15,9 @@ if TYPE_CHECKING:
 
 
 class NodeList(Sequence):
-    """Internal listing of children components as a structure for the parent
-    component
-    """
-    # insert_after/before index can be added
+    """Responsible for providing a structure for accessing an ordered
+    component list"""
+    # TODO: insert_after/before index can be added
 
     def __init__(self) -> None:
         self._nodes_list: list[Component] = []  # preserve order

@@ -1,10 +1,14 @@
-"""Terminal module allows reading and modifying the terminal's properties"""
+"""
+This file makes the connection between the application and the terminal it's
+being ran it.
+"""
 
 from os import get_terminal_size, terminal_size
 
 
 class Terminal:
-    """Useful information about the terminal that's currently being used."""
+    """Responsible for providing an interface to the terminal the programm is
+    being ran in"""
 
     def __init__(self) -> None:
         self.__size: terminal_size = get_terminal_size()  # columns and rows

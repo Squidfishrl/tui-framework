@@ -1,4 +1,4 @@
-"""Describe border frames"""
+"""Describes how every part of a border should look."""
 
 from abc import ABC
 

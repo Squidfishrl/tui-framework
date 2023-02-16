@@ -61,11 +61,11 @@ def test_compose_one_child(
 ):
     """Test that one child is composed correctly without column/row expansion
     """
-    ten_by_ten_div._Component__area = Compositor.fill_area(
+    ten_by_ten_div.area = Compositor.fill_area(
             ten_by_ten_div,
             symbol="+"
         )
-    ten_by_three_divs[0]._Component__area = Compositor.fill_area(
+    ten_by_three_divs[0].area = Compositor.fill_area(
             ten_by_three_divs[0],
             symbol="*"
         )
@@ -90,16 +90,16 @@ def test_compose_two_child(
         ten_by_ten_div: Division
 ):
     """Test that two children are composed correctly"""
-    ten_by_ten_div._area = Compositor.fill_area(
+    ten_by_ten_div.area = Compositor.fill_area(
             ten_by_ten_div,
             symbol="+"
         )
-    ten_by_three_divs[0]._area = Compositor.fill_area(
+    ten_by_three_divs[0].area = Compositor.fill_area(
             ten_by_three_divs[0],
             symbol="*"
         )
 
-    ten_by_three_divs[1]._area = Compositor.fill_area(
+    ten_by_three_divs[1].area = Compositor.fill_area(
             ten_by_three_divs[1],
             symbol="#"
         )
@@ -143,19 +143,19 @@ def test_compose_one_child_which_has_one_child(
     correctly"""
 
     ten_by_ten_div.append_child(ten_by_three_divs[0])
-    ten_by_ten_div._area = Compositor.fill_area(
+    ten_by_ten_div.area = Compositor.fill_area(
             ten_by_ten_div,
             symbol=str("+")
         )
 
     ten_by_three_divs[0].append_child(ten_by_one_divs[0])
 
-    ten_by_three_divs[0]._area = Compositor.fill_area(
+    ten_by_three_divs[0].area = Compositor.fill_area(
             ten_by_three_divs[0],
             symbol=str("*")
         )
 
-    ten_by_one_divs[0]._area = Compositor.fill_area(
+    ten_by_one_divs[0].area = Compositor.fill_area(
             ten_by_one_divs[0],
             symbol=str("#")
         )
@@ -182,7 +182,7 @@ def test_compose_children_which_have_children(
     """Test that a component with 3 children, which each have 3 children, is
     composed correctly"""
 
-    ten_by_ten_div._area = Compositor.fill_area(
+    ten_by_ten_div.area = Compositor.fill_area(
             ten_by_ten_div,
             symbol=str("+")
         )
@@ -193,24 +193,24 @@ def test_compose_children_which_have_children(
         for _ in range(3):
             ten_by_three_divs[i].append_child(ten_by_one_divs[nested_children])
 
-            ten_by_one_divs[nested_children]._area = Compositor.fill_area(
+            ten_by_one_divs[nested_children].area = Compositor.fill_area(
                     ten_by_one_divs[nested_children],
                     symbol=str(nested_children)
                 )
 
             nested_children += 1
 
-    ten_by_three_divs[0]._area = Compositor.fill_area(
+    ten_by_three_divs[0].area = Compositor.fill_area(
             ten_by_three_divs[0],
             symbol=str("*")
         )
 
-    ten_by_three_divs[1]._area = Compositor.fill_area(
+    ten_by_three_divs[1].area = Compositor.fill_area(
             ten_by_three_divs[1],
             symbol=str("#")
         )
 
-    ten_by_three_divs[2]._area = Compositor.fill_area(
+    ten_by_three_divs[2].area = Compositor.fill_area(
             ten_by_three_divs[2],
             symbol=str("@")
         )
@@ -225,22 +225,5 @@ def test_compose_children_which_have_children(
 6666666666
 7777777777
 8888888888
-++++++++++\
-"""
-
-
-def test_border(ten_by_ten_div):
-    """Test that border is correctly applied to a component with no children"""
-    new_area = Compositor.draw_border(ten_by_ten_div, symbol="+")
-    assert str(new_area) == """\
-++++++++++
-+        +
-+        +
-+        +
-+        +
-+        +
-+        +
-+        +
-+        +
 ++++++++++\
 """

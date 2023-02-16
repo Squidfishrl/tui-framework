@@ -1,4 +1,7 @@
-"""Composes all components to one area"""
+"""
+The compositor handles combining (compositing) components to a single screen.
+It may composite only a part of the screen where updates have occurred.
+"""
 
 from __future__ import annotations
 
@@ -7,6 +10,7 @@ from typing import TYPE_CHECKING, Optional
 
 from tui._coordinates import Coordinates, Rectangle, CoordinateError
 from tui.component import Area
+from tui.styles.compositor import Orientation
 
 if TYPE_CHECKING:
     from tui.component import Component
@@ -22,9 +26,7 @@ class InsufficientAreaError(CompositorError):
 
 
 class Compositor:
-    """Composes all components to one area
-    Handle all modifications to 'Area'
-    """
+    """Responsible for compositing components into a single area"""
 
     @staticmethod
     def compose(root: Component) -> Area:
@@ -80,7 +82,7 @@ class Compositor:
     ) -> Rectangle:
         """Helper function that decides where components are placed when
         compositing"""
-        if parent.style.compositor_info.inline:
+        if parent.style.compositor_info.display == Orientation.INLINE:
             return Compositor.__get_next_rectangle_inline(
                     parent=parent,
                     component=component,
@@ -97,14 +99,14 @@ class Compositor:
     def __get_next_rectangle_inline(
             parent: Component,  # the parent component this one will reside in
             component: Component,  # the component calculations are done for
-            # rectnalge for the previous component
+            # rectangle for the previous component
             prev_rect: Optional[Rectangle] = None
     ) -> Rectangle:
         """Helper function for inline compositing. Returns the area the next
         component should be placed in
 
         Default prev_rectangle is a rectangle outside of the parent's area
-        that's derrived to place the component in the top left of the parent
+        that's derived to place the component in the top left of the parent
         component's area:
             top_left:  row = 0 && column <= -1
             bottom_right:  row >= 0 && column = -1
@@ -131,7 +133,7 @@ class Compositor:
     def __get_next_rectangle_block(
             parent: Component,  # the parent component this one will reside in
             component: Component,  # the component calculations are done for
-            # rectnalge for the previous component
+            # rectangle for the previous component
             prev_rect: Optional[Rectangle] = None
     ) -> Rectangle:
         """Helper function for block compositing. Returns the area the next
@@ -162,8 +164,8 @@ class Compositor:
 
     @staticmethod
     def fill_area(component: Component, symbol: str) -> Area:
-        """Fill the entire area of a component with a symbol
-        Used mainly for debugging/tests"""
+        """Fill the entire area of a component with a symbol. Used mainly for
+        debugging and tests"""
         if len(symbol) != 1:
             raise ValueError("symbol must be one char")
 
@@ -172,37 +174,4 @@ class Compositor:
         new_area.area_ptr.column = 0
 
         new_area.add_chars(((symbol * new_area.columns)+"\n") * new_area.rows)
-        return new_area
-
-    @staticmethod
-    def draw_border(component: Component, symbol: str) -> Area:
-        """Draw border around a component
-        TODO: Border style should be defined in style.py
-        """
-        if len(symbol) != 1:
-            raise ValueError("symbol must be one char")
-
-        new_area = copy.deepcopy(component.area)
-        new_area.area_ptr.row = 0
-        new_area.area_ptr.column = 0
-
-        # add first row
-        new_area.add_chars(symbol * new_area.rows)
-
-        # add border on the side
-        new_area.add_chars(
-                (symbol+"\n") * new_area.columns,
-                column_preserve=True
-            )
-
-        new_area.area_ptr.column = new_area.columns - 1
-        new_area.add_chars(
-                (symbol+"\n") * new_area.columns,
-                column_preserve=True
-            )
-
-        # add last row
-        new_area.area_ptr.row = new_area.rows - 1
-        new_area.area_ptr.column = 0
-        new_area.add_chars(symbol * new_area.rows)
         return new_area

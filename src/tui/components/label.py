@@ -1,4 +1,7 @@
-"""A widget that can hold text which can be modified at runtime"""
+"""
+A label is a widget that holds text and is capable of aligning the text within
+itself. Dynamic changes to the label's text should are also handled
+"""
 
 from typing import Optional
 import re
@@ -15,8 +18,8 @@ class Label(Widget):
     """
     def __init__(
             self,
-            identifier: Optional[str] = None,  # Unique identifier
             style: str | Style = Style(),  # Style properties for the component
+            identifier: Optional[str] = None,  # Unique identifier
             label_text: str = ""  # The text that's displayed on the label
     ) -> None:
         super().__init__(identifier=identifier, style=style)
