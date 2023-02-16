@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import re
 from typing import Any, ClassVar
+from tui._parser import Parser
 
 from tui.styles.area import AreaInfo
 from tui.styles.colour import ColourInfo
@@ -25,39 +26,6 @@ class Style:
     compositor_info: CompositorInfo = field(default_factory=CompositorInfo)
     text_info: TextInfo = field(default_factory=TextInfo)
     colour_info: ColourInfo = field(default_factory=ColourInfo)
-
-    # validate that string format is correct and can be converted to a style
-    __validate_str_pattern: ClassVar[re.Pattern] = re.compile(r"""
-[ \n]* # non strict newlines and whitespaces
-(?:\w+) # attribute name
-[ \n]*
-=
-[ \n]*
-(?:\w+|\d+) # attribute value (string or whole number)
-(?: # group for multiple attribute-value pairs
-[ \n]*
-, # separator for attribute-value pairs
-[ \n]*
-(?:\w+)
-[ \n]*
-=
-[ \n]*
-(?:\w+|\d+)
-)* # can have any amount of attribute-value pairs
-[ \n]*
-,? # can end with or without a comma
-[ \n]*
-""", re.VERBOSE)
-    # get attribute and value to convert to style
-    __str_pattern_to_attr_and_val: ClassVar[re.Pattern] = re.compile(r"""
-(?: # group attribute-value pairs
-(\w+) # get attribute name
-[ \n]* # non strict newlines and whitespaces
-=
-[ \n]*
-(\w+|\d+) # get attribute value (string or integer)
-)* # repeat group for every pair
-""", re.VERBOSE)
 
     # Contains a mapping of all the substyle attributes and the substyle they
     # are defined within in the following format:
@@ -117,15 +85,15 @@ class Style:
 
     @staticmethod
     def fromstr(string: str) -> Style:
-        """Generate a style from a string defining the deviations from the
-        default style. The string should be formatted in the following syntax:
-        'attribute=value, ...' See `__validate_str_pattern` regex for more
-        details"""
-        if not re.fullmatch(Style.__validate_str_pattern, string):
+        """Generate a style from a string that defines the deviations from the
+        default style values. The string should be formatted in the following 
+        syntax: 'attribute=value, ...' 
+        See 'Parser.valid_str_to_style_pattern' for more details"""
+        if not re.fullmatch(Parser.valid_str_to_style_pattern, string):
             raise ValueError("Invalid string format")
 
         # get all attribute-value pairs
-        _attributes = re.findall(Style.__str_pattern_to_attr_and_val, string)
+        _attributes = re.findall(Parser.style_str_to_attr_and_val, string)
         # create a dictionary for O(1) search speed
         attributes = {pair[0]: pair[1] for pair in _attributes}
         attributes.pop('')  # An empty key is generated and has to be removed

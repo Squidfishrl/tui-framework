@@ -7,6 +7,7 @@ from typing import Optional
 import re
 
 from tui.components.widget import Widget
+from tui._parser import Parser
 from tui.style import Style
 from tui.styles.text import TextAlignment, VerticalAlignment
 
@@ -40,7 +41,6 @@ class Label(Widget):
         """Set the label's text"""
         max_width = self.area.model.with_padding.columns
         max_height = self.area.model.with_padding.rows
-        wrap_pattern = re.compile("(.{0," + str(max_width) + "})(?: | ?$)")
         lines = []
 
         cannot_wrap = not self.style.get_value("text_wrap")
@@ -53,8 +53,8 @@ class Label(Widget):
             if cannot_wrap and len(line) > max_width:
                 raise ValueError("Text line is too long, cannot fit")
 
-            wrapped_lines = re.findall(wrap_pattern, line)[:-1]
-            for _line in wrapped_lines:
+            wrapped_lines = re.findall(Parser.auto_wrap_text(max_width), line)
+            for _line in wrapped_lines[:-1]:  # last value is a dud so trim it
                 # align text horizontally
                 match self.style.get_value("text_align"):
                     case TextAlignment.LEFT:
