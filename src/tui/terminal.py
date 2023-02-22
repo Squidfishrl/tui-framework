@@ -51,6 +51,7 @@ class Terminal:
         """Restore terminal settings so that they do not affect the terminal
         after the app terminates."""
         system("stty echo")
+        system("stty sane")
         self.__input = False
 
     @property

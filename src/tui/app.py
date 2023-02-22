@@ -7,14 +7,19 @@ import threading
 from typing import Optional, TYPE_CHECKING
 from queue import Queue
 
+import colorama
+
+from tui._coordinates import Coordinates
+from tui.components.container import Container
 from tui.compositor import Compositor
+from tui.event_broker import EventBroker
+from tui.mouse import MouseAction, MouseButton, MouseEvent
 from tui.styles.border import DefaultBorder
 from tui.terminal import Terminal
 from tui.components.division import Division
 
 if TYPE_CHECKING:
     from tui.keys import Keys
-    from tui.mouse import MouseEvent
 
 
 class App():
@@ -38,7 +43,35 @@ class App():
         self.frequency = 1 / fps
 
         # Create a root element with the size of the terminal resolution
-        self.root = Division(style=f"rows={rows}, columns={columns}")
+        self._root = Division(style=f"rows={rows}, columns={columns}")
+        self.root = self._root
+
+    @property
+    def root(self) -> Container:
+        """Get the root component"""
+        return self._root
+
+    @root.setter
+    def root(self, new_root: Container) -> None:
+        """Change the root component"""
+        EventBroker.unsubscribe_all(self.root)
+        self._root = new_root
+
+        def draw_cursor(event: str | tuple[Keys] | MouseEvent):
+            area = self._root.area.char_area
+            area[event.coordinates.row][event.coordinates.column] = colorama.Fore.BLACK + colorama.Back.WHITE + area[event.coordinates.row][event.coordinates.column] + colorama.Style.RESET_ALL
+
+        EventBroker.subscribe(
+                MouseEvent(
+                    coordinates=Coordinates(0, 0),
+                    action=MouseAction.MOUSE_MOVE,
+                    button=MouseButton.NONE,
+                    modifiers=frozenset()
+                ),
+                subscriber=self._root,
+                post_composition=lambda event: draw_cursor(event),
+                local=False
+            )
 
     def get_events(self) -> None:
         """Continuously fetch events and put them in the event queue."""
@@ -48,11 +81,13 @@ class App():
         while True:
             # read from stdin
             control_code = self.__terminal.read_bytes(bytes=16).decode()
-            # check if it's a mouse control code and add to the event queue
+            # check if it's a control sequence or a simple key press
             if len(control_code) == 1:
                 self.event_queue.put(control_code)
                 continue
 
+            # check if it's a mouse control code and add to the event queue
+            # TODO: verify without raising exceptions
             try:
                 self.event_queue.put(ANSI_SEQUENCES_KEYS[control_code])
             except KeyError:
@@ -71,8 +106,14 @@ class App():
         try:
             while True:
                 if self.event_queue.qsize() > 0:
-                    print(self.event_queue.get())  # TODO: execute event
-                    print(Compositor.compose(self.root), end='')
+                    event = self.event_queue.get()
+                    pre_composit_hooks, post_composit_hooks = EventBroker.handle(event)
+                    print(Compositor.compose(
+                                            self.root,
+                                            pre_composit=pre_composit_hooks,
+                                            post_composit=post_composit_hooks,
+                                            event=event),
+                          end='')
 
                 time.sleep(self.frequency)
         except KeyboardInterrupt:

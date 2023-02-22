@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Mapping, Tuple
 
 
-# Used from textual
+# Adapted from textual
 # https://github.com/Textualize/textual/blob/main/src/textual/keys.py
 class Keys(str, Enum):
     """
@@ -193,7 +193,7 @@ class Keys(str, Enum):
     ShiftControlEnd = ControlShiftEnd
 
 
-# Used from textual
+# Adapted from textual
 # https://github.com/Textualize/textual/blob/main/src/textual/_ansi_sequences.py
 # Mapping of vt100 escape codes to Keys.
 ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {

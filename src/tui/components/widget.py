@@ -31,4 +31,4 @@ class Widget(Component):
     @property
     def children(self) -> None:
         """Widgets can't have child components"""
-        return None
+        return []

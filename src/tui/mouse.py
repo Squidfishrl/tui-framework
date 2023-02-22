@@ -19,6 +19,17 @@ class MouseEvent:
         self.button = button
         self.modifiers = modifiers
 
+    def __eq__(self, _o: MouseEvent) -> bool:
+        """Used by the event broker"""
+        return (self.action, self.button, self.modifiers) == (_o.action, _o.button, _o.modifiers)
+
+    def __hash__(self):
+        mod_str = ""
+        for modifier in self.modifiers:
+            mod_str += modifier.value
+
+        return hash((self.action.value, self.button.value, mod_str))
+
     def __repr__(self) -> str:
         return f"\
 {self.coordinates}, {self.action}, {self.button}, {self.modifiers}\

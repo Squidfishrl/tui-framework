@@ -20,10 +20,11 @@ class Container(Component):
 
     def __init__(
             self,
+            *children: Component,  # Child components
             style: str | Style = Style(),  # Style properties for the component
             identifier: Optional[str] = None,  # Unique identifier
-            *children: Component  # Child components
     ) -> None:
+        print(children)
         super().__init__(identifier=identifier, style=style)
 
         for child in children:

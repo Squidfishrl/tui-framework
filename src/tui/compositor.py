@@ -10,6 +10,9 @@ from typing import TYPE_CHECKING, Optional
 
 from tui._coordinates import Coordinates, Rectangle, CoordinateError
 from tui.component import Area
+from tui.event_listener import Callback
+from tui.keys import Keys
+from tui.mouse import MouseEvent
 from tui.styles.compositor import Orientation
 
 if TYPE_CHECKING:
@@ -29,7 +32,27 @@ class Compositor:
     """Responsible for compositing components into a single area"""
 
     @staticmethod
-    def compose(root: Component) -> Area:
+    def compose(
+            root: Component,  # the component which's area is being composed
+            pre_composit: list[Callback],
+            post_composit: list[Callback],
+            event: str | tuple[Keys] | MouseEvent
+    ) -> Area:
+        """Compose a component with its children components recursively. Run
+        pre-compose and post-compose hooks
+        """
+        for callback in pre_composit:
+            callback(event)
+
+        new_area = Compositor._compose(root=root)
+
+        for callback in post_composit:
+            callback(event)
+
+        return new_area
+
+    @staticmethod
+    def _compose(root: Component) -> Area:
         """Compose a component with its children components recursively
 
         root: the component's area that's being composed
@@ -54,7 +77,7 @@ class Compositor:
                     ) from exc
 
             # recursion ends when there are no more children
-            child_area = Compositor.compose(child)
+            child_area = Compositor._compose(child)
             new_area.area_ptr.row = (
                 prev_rect.top_left.row
                 + new_area.model.with_padding.top_left.row

@@ -23,10 +23,18 @@ class Parser:
     @cache
     def get_mouse_event(control_code: str) -> MouseEvent:
         """Convert a VT100 mouse control code to a MouseEvent object."""
-        _type, column, row, release = re.findall(
-                Parser.mouse_event_capture,
-                control_code
-            )[0]
+        try:
+            _type, column, row, release = re.findall(
+                    Parser.mouse_event_capture,
+                    control_code
+                )[0]
+        except IndexError:
+            return MouseEvent(
+                coordinates=Coordinates(0, 0),
+                action=MouseAction.UNKNOWN,
+                button=MouseButton.NONE,
+                modifiers=frozenset()
+            )
 
         event_info = xterm_code_map.get(_type)
         if event_info is not None:

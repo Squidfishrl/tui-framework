@@ -24,6 +24,8 @@ class Component(CMNode):
             identifier: Optional[str] = None,  # Unique id
     ) -> None:
         self.style = style
+        # if a component has focus, it will listen to it's non-global events
+        self._focus = False
 
         self.__area = Area(self.__style.area_info)
         super().__init__(identifier=identifier)
@@ -40,6 +42,10 @@ class Component(CMNode):
     def get_style(self, attribute_name: str) -> Any:
         """Get the value of a style attribute"""
         self.style.get_value(attribute_name)
+
+    def has_focus(self) -> bool:
+        """Does the component have focus?"""
+        return self._focus
 
     @property
     def style(self) -> Style:
