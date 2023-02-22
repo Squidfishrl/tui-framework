@@ -5,7 +5,7 @@ from functools import cache
 import re
 
 from tui._coordinates import Coordinates
-from tui.mouse import MouseAction, MouseButton, MouseEvent, MouseModifier, xterm_code_map 
+from tui.mouse import MouseAction, MouseButton, MouseEvent, xterm_code_map
 
 
 class Parser:
@@ -17,16 +17,16 @@ class Parser:
     style_str_to_attr_and_val: re.Pattern
 
     # capture mouse event info
-    __mouse_event_capture: re.Pattern
+    mouse_event_capture: re.Pattern
 
     @staticmethod
     @cache
-    def get_mouse_event(control_code: bytes) -> MouseEvent:
+    def get_mouse_event(control_code: str) -> MouseEvent:
         """Convert a VT100 mouse control code to a MouseEvent object."""
         _type, column, row, release = re.findall(
-                Parser.__mouse_event_capture,
+                Parser.mouse_event_capture,
                 control_code
-            )
+            )[0]
 
         event_info = xterm_code_map.get(_type)
         if event_info is not None:
@@ -85,13 +85,15 @@ Parser.style_str_to_attr_and_val = re.compile(r"""
 """, re.VERBOSE)
 
 # \x1b[<0;99;20M
-Parser.__mouse_event_capture = re.compile(r"""
-\\x1b  # CSI
+Parser.mouse_event_capture = re.compile(r"""
+(?: # control code
+\x1b # CSI (escaping `\` isn't necessary)
 \[<
-(\d+)  # event type
+(\d+) # event type
 ;
-(\d+)  # column
+(\d+) # column
 ;
-(\d+)  # row
-([m|M])  # hold or release
+(\d+) # row
+([m|M]) # hold or release
+)
 """, re.VERBOSE)
