@@ -5,20 +5,20 @@ from __future__ import annotations
 from typing import Any, Awaitable, Optional, Protocol
 
 from tui.component import Component
-from tui.keys import Keys
-from tui.mouse import MouseEvent
+from tui.events.event import Event
 
 
 class EventListener:
     """Responsible for defining the component's behaviour for events"""
     def __init__(
             self,
-            event_type: str | tuple[Keys] | MouseEvent,
-            subscriber: Component,
+            event: Event,
+            # when no component is passed the evenet is considered global
+            subscriber: Optional[Component],
             pre_composition: Optional[Callback] = None,
             post_composition: Optional[Callback] = None
     ) -> None:
-        self.event_type = event_type
+        self.event = event
         self.subscriber = subscriber
         self.pre_composition = pre_composition
         self.post_composition = post_composition

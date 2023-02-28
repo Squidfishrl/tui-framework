@@ -71,10 +71,13 @@ def test_get_item(ten_component_list: NodeList):
     assert True
 
 
-def test_get_item_with_invalid_index(ten_component_list: NodeList):
+def test_get_item_with_invalid_index(
+        ten_component_list: NodeList,
+        one_component: Division
+):
     """Test that using an index out of scope raises an IndexError"""
     with pytest.raises(IndexError):
-        ten_component_list[50] = None  # test accessing - not the statement
+        ten_component_list[50] = one_component  # test accessing
 
 
 def test_set_item(ten_component_list: NodeList, one_component: Division):
@@ -102,12 +105,12 @@ def test_contains_component(
 
 def test_get_component_with_id(ten_component_list: NodeList):
     """Test that a component with the corresponding id is returned"""
-    assert isinstance(ten_component_list.get_component_with_id("4"), Division)
+    assert isinstance(ten_component_list.get_by_id("4"), Division)
 
 
 def test_get_component_with_invalid_id(ten_component_list: NodeList):
     """Test that a component with the corresponding id is returned"""
-    assert ten_component_list.get_component_with_id("Y") is None
+    assert ten_component_list.get_by_id("Y") is None
 
 
 def test_pop_component(ten_component_list: NodeList):
@@ -132,7 +135,6 @@ def test_internal_dict_is_updated(ten_component_list: NodeList):
 
     ten_component_list.remove(ten_component_list[1])  # 6 8 9 at this point
 
-    ten_component_list.append(Division())
     ten_component_list.append(Division(identifier="l"))
 
     assert list(ten_component_list._nodes_dict.keys()) == ["6", "8", "9", "l"]

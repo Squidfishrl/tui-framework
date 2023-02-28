@@ -33,13 +33,14 @@ class Label(Widget):
 
     def clear(self) -> None:
         """Clear existing area"""
-        self.text = self.area.model.with_padding.columns * self.area.model.with_padding.rows * " "
+        self.text = (self.area.model.with_padding.columns *
+                     self.area.model.with_padding.rows *
+                     " ")
 
     @property
     def text(self) -> str:
         """Get the label's text"""
         return self._text
-
 
     @text.setter
     def text(self, new_text: str) -> None:

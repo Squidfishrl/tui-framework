@@ -71,7 +71,7 @@ def test_compose_one_child(
         )
     ten_by_ten_div.append_child(ten_by_three_divs[0])
 
-    assert str(Compositor.compose(ten_by_ten_div)) == """\
+    assert str(Compositor._compose(ten_by_ten_div)) == """\
 **********
 **********
 **********
@@ -107,7 +107,7 @@ def test_compose_two_child(
     ten_by_ten_div.append_child(ten_by_three_divs[0])
     ten_by_ten_div.append_child(ten_by_three_divs[1])
 
-    assert str(Compositor.compose(ten_by_ten_div)) == """\
+    assert str(Compositor._compose(ten_by_ten_div)) == """\
 **********
 **********
 **********
@@ -131,7 +131,7 @@ def test_compose_child_that_exceeds_area_size(
         ten_by_ten_div.append_child(ten_by_three_divs[i])
 
     with pytest.raises(InsufficientAreaError):
-        Compositor.compose(ten_by_ten_div)
+        Compositor._compose(ten_by_ten_div)
 
 
 def test_compose_one_child_which_has_one_child(
@@ -160,7 +160,7 @@ def test_compose_one_child_which_has_one_child(
             symbol=str("#")
         )
 
-    assert str(Compositor.compose(ten_by_ten_div)) == """\
+    assert str(Compositor._compose(ten_by_ten_div)) == """\
 ##########
 **********
 **********
@@ -215,7 +215,7 @@ def test_compose_children_which_have_children(
             symbol=str("@")
         )
 
-    assert str(Compositor.compose(ten_by_ten_div)) == """\
+    assert str(Compositor._compose(ten_by_ten_div)) == """\
 0000000000
 1111111111
 2222222222

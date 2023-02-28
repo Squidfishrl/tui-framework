@@ -10,9 +10,8 @@ from typing import TYPE_CHECKING, Optional
 
 from tui._coordinates import Coordinates, Rectangle, CoordinateError
 from tui.component import Area
-from tui.event_listener import Callback
-from tui.keys import Keys
-from tui.mouse import MouseEvent
+from tui.events.event import Event
+from tui.events.event_listener import Callback
 from tui.styles.compositor import Orientation
 
 if TYPE_CHECKING:
@@ -36,7 +35,7 @@ class Compositor:
             root: Component,  # the component which's area is being composed
             pre_composit: list[Callback],
             post_composit: list[Callback],
-            event: str | tuple[Keys] | MouseEvent
+            event: Event
     ) -> Area:
         """Compose a component with its children components recursively. Run
         pre-compose and post-compose hooks

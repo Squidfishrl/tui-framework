@@ -4,9 +4,6 @@ other classes with long regex patterns."""
 from functools import cache
 import re
 
-from tui._coordinates import Coordinates
-from tui.mouse import MouseAction, MouseButton, MouseEvent, xterm_code_map
-
 
 class Parser:
     """Responsible for holding all regex patters"""
@@ -15,43 +12,6 @@ class Parser:
     valid_str_to_style_pattern: re.Pattern
     # used for fetching attribute-value pairs from a style string
     style_str_to_attr_and_val: re.Pattern
-
-    # capture mouse event info
-    mouse_event_capture: re.Pattern
-
-    @staticmethod
-    @cache
-    def get_mouse_event(control_code: str) -> MouseEvent:
-        """Convert a VT100 mouse control code to a MouseEvent object."""
-        try:
-            _type, column, row, release = re.findall(
-                    Parser.mouse_event_capture,
-                    control_code
-                )[0]
-        except IndexError:
-            return MouseEvent(
-                coordinates=Coordinates(0, 0),
-                action=MouseAction.UNKNOWN,
-                button=MouseButton.NONE,
-                modifiers=frozenset()
-            )
-
-        event_info = xterm_code_map.get(_type)
-        if event_info is not None:
-            action = MouseAction.MOUSE_DOWN if release == 'm' else event_info[0]
-            btn = event_info[1]
-            modifiers = frozenset(event_info[2])
-        else:
-            action = MouseAction.UNKNOWN
-            btn = MouseButton.NONE
-            modifiers = frozenset()
-
-        return MouseEvent(
-                coordinates=Coordinates(_row=int(row), _column=int(column)),
-                action=action,
-                button=btn,
-                modifiers=modifiers
-            )
 
     @staticmethod
     @cache
@@ -90,18 +50,4 @@ Parser.style_str_to_attr_and_val = re.compile(r"""
 [ \n]*
 (\w+|\d+) # get attribute value (string or integer)
 )* # repeat group for every pair
-""", re.VERBOSE)
-
-# \x1b[<0;99;20M
-Parser.mouse_event_capture = re.compile(r"""
-(?: # control code
-\x1b # CSI (escaping `\` isn't necessary)
-\[<
-(\d+) # event type
-;
-(\d+) # column
-;
-(\d+) # row
-([m|M]) # hold or release
-)
 """, re.VERBOSE)

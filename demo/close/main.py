@@ -13,6 +13,7 @@ from tui.styles.border import DefaultBorder
 
 
 def main():
+    # Create app instance with preset rows and columns
     app = App(rows=51, columns=72)
     app.root = Division(style="rows=51, columns=72, padding=1, padding_top=0, padding_bottom=0, margin_top=1", identifier="root")
     app.root.add_border(DefaultBorder)
