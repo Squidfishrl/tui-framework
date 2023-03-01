@@ -17,6 +17,7 @@ class CMNode(ABC):
     """Base object in the model. An abstract class, handling the treelike
     structure"""
     id_counter = 0
+
     def __init__(
             self,
             identifier: Optional[str] = None,  # Unique node id

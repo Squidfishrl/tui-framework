@@ -13,8 +13,8 @@ class EventListener:
     def __init__(
             self,
             event: Event,
-            # when no component is passed the evenet is considered global
-            subscriber: Optional[Component],
+            # when no component is passed the event is considered global
+            subscriber: Component,
             pre_composition: Optional[Callback] = None,
             post_composition: Optional[Callback] = None
     ) -> None:

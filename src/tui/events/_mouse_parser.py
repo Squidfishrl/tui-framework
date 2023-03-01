@@ -1,3 +1,4 @@
+"""The mouse parser is used for converting a mouse event code to MouseEvent"""
 
 from functools import cache
 import re
@@ -8,7 +9,8 @@ from tui.events.mouse_event import MouseEvent
 
 
 class MouseParser:
-    """Class for parsing VT100 mouse events"""
+    """Responsble for parsing VT100 terminal codes and converting them to a
+    Mouse Event."""
     # capture mouse event info
     mouse_event_capture: re.Pattern
 
@@ -29,7 +31,7 @@ class MouseParser:
             )
 
         # TODO: handle MOUSE_DOWN
-        release = True if release == 'm' else False
+        release = release == 'm'
 
         event_type = xterm_code_map.get(_type)
         coords = Coordinates(_row=int(row), _column=int(column))

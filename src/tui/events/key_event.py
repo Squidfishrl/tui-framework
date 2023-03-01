@@ -1,11 +1,15 @@
-"""Key event"""
+"""The Hotkey Event reports single key presses as well as a complex combination
+of keys(hotkey). Do note that some terminals cannot report keys in VT100 mode,
+or they might use a different bytes for reporting them which can result in
+limited/false events being reported."""
 
 from tui.events.event import Event, Modifiers
 from tui.events.keys import Keys
 
 
 class HotkeyEvent(Event):
-    """Key Event"""
+    """The HotkeyEvent is triggered on a button press. It's responsible for
+    describing the event - a key with what modifiers was pressed?"""
     def __init__(
             self,
             hotkeys: str | tuple[str, ...] | Keys | tuple[Keys, ...]
@@ -29,4 +33,4 @@ class HotkeyEvent(Event):
                     normal_keys.append(key)
 
         self.keys = frozenset(normal_keys)
-        self.modifiers = frozenset(modifier_list)
+        super().__init__(frozenset(modifier_list))

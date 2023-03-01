@@ -51,24 +51,29 @@ class App():
 
             def draw_cursor() -> None:
                 try:
-                    area[event.coordinates.row][event.coordinates.column] = (
+                    row = event.coordinates.row
+                    col = event.coordinates.column
+                    area[row][col] = (
                             colorama.Fore.BLACK + colorama.Back.WHITE +
-                            area[event.coordinates.row][event.coordinates.column] +
+                            area[row][col] +
                             colorama.Style.RESET_ALL
                         )
                 except IndexError:
                     pass
 
             def undraw_cursor() -> None:
-                prev_coords = show_cursor.prev_coords
+                row = show_cursor.prev_coords.row
+                col = show_cursor.prev_coords.column
                 try:
-                    area[prev_coords.row][prev_coords.column] = show_cursor.prev_value
+                    area[row][col] = show_cursor.prev_value
                 except IndexError:
                     pass
 
             prev_value = show_cursor.prev_value
             try:
-                prev_value = area[event.coordinates.row][event.coordinates.column]
+                prev_value = (
+                        area[event.coordinates.row][event.coordinates.column]
+                    )
             except IndexError:
                 pass
 

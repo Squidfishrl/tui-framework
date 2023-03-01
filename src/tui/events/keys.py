@@ -1,3 +1,5 @@
+"""Defines possible hotkeys and maps them to VT100 codes"""
+
 from enum import Enum
 from typing import Mapping, Tuple
 
@@ -11,6 +13,7 @@ class Keys(str, Enum):
     Note that this is an "StrEnum", all values can be compared against
     strings.
     """
+
     Escape = "escape"  # Also Control-[
     ShiftEscape = "shift+escape"
     Return = "return"

@@ -23,9 +23,9 @@ class Terminal:
         self.enable_input()
         self.enable_mouse()
 
-    def read_bytes(self, bytes: int = 16) -> bytes:
+    def read_bytes(self, _bytes: int = 16) -> bytes:
         """Read bytes from the input stream"""
-        return read(self.input_fd, bytes)
+        return read(self.input_fd, _bytes)
 
     def enable_mouse(self) -> None:
         """Enable mouse reporting"""

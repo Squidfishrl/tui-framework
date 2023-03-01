@@ -1,4 +1,7 @@
-"""Define mouse events"""
+"""Defines possible mouse events and maps them to their corresponding codes.
+A mouse event can be segregated into a mouse action, button click and key
+modifiers."""
+
 from __future__ import annotations
 
 from enum import Enum
@@ -7,7 +10,7 @@ from tui.events.event import Event, Modifiers
 
 
 class MouseAction(Enum):
-    """Enum holding the possible mouse events."""
+    """Enum responsible or holding all possible mouse events."""
 
     # Triggered when mouse changes coordinates.
     MOUSE_MOVE = "MOUSE_MOVE"
@@ -25,7 +28,7 @@ class MouseAction(Enum):
 
 
 class MouseButton(Enum):
-    """Enum holding the possible mouse button states."""
+    """Enum responsible for holding the possible mouse button states."""
     LEFT = "LEFT"
     MIDDLE = "MIDDLE"
     RIGHT = "RIGHT"
@@ -33,7 +36,8 @@ class MouseButton(Enum):
 
 
 class _MouseEvent(Event):
-    """Mouse event without the coordinates"""
+    """Mouse event without the coordinates. Event listeners are subscribed to
+    this event type since coordinates aren't required for the event"""
     def __init__(
             self,
             action: MouseAction,
@@ -47,7 +51,8 @@ class _MouseEvent(Event):
 
 
 class MouseEventTypes(Enum):
-    """Enum of possible mouse events"""
+    """Enum responsible for holding the possible mouse events and their class
+    instances."""
     MOUSE_MOVE = _MouseEvent(action=MouseAction.MOUSE_MOVE,
                              button=MouseButton.NONE,
                              modifiers=[])
@@ -154,7 +159,8 @@ class MouseEventTypes(Enum):
                                 modifiers=[])
 
 
-# Mouse control sequences translated for most xterms
+# Mouse control sequences mapped for most xterms to the corresponding mouse
+# event type
 xterm_code_map: Mapping[str, MouseEventTypes] = {
     "35": MouseEventTypes.MOUSE_MOVE,
     "39": MouseEventTypes.MOUSE_SHIFT_MOVE,

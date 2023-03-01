@@ -1,4 +1,6 @@
-"""Manages events"""
+"""The event broker is a middle ground layer between the event producer thread
+and the 'consumer' listeners. It handles subscribing listeners to events and
+calling them on event trigger."""
 
 
 from typing import Optional
@@ -11,9 +13,9 @@ from tui.events.mouse_event import MouseEvent
 
 
 class EventBroker:
-    """Responsible for managing events"""
+    """Responsible for managing event subscription and event callbacks"""
 
-    # a 'subscriber' with id -1 is used to signify a global event
+    # a 'subscriber' with id ==  -1 is used to signify a global event
     global_component = Division(identifier='-1')
 
     def __init__(self):
@@ -22,13 +24,19 @@ class EventBroker:
 
     def subscribe(
             self,
-            event: Event | MouseEventTypes,
+            event: Event | MouseEventTypes,  # the event we listen for
+            # the subscriber component must have focus before the event
+            # callbacks
             subscriber: Optional[Component],
+            # most callbacks are expected to be called before composition
             pre_composition: Optional[Callback] = None,
+            # callback after composition is done
             post_composition: Optional[Callback] = None,
     ) -> EventListener:
-        """Create an event listener.
-        Converts different event types to Event ones
+        """Create an event listener, given a subscriber component. If the
+        subscriber component has focus and the corresponding event is received,
+        the pre_composition function is called back, then global composition
+        occurs, then post_composition functions are executed.
         """
         if isinstance(event, MouseEventTypes):
             _event = event.value
@@ -51,7 +59,14 @@ class EventBroker:
             pre_composition: Optional[Callback] = None,
             post_composition: Optional[Callback] = None,
     ) -> EventListener:
-        """Create an event listener"""
+        """Create an event listener, given a subscriber component. If the
+        subscriber component has focus and the corresponding event is received,
+        the pre_composition function is called back, then global composition
+        occurs, then post_composition functions are executed.
+
+        This is an inner function, only to be called by self.subscribe after
+        arguments are handled.
+        """
 
         listener = EventListener(
                     event=event,
@@ -78,24 +93,11 @@ class EventBroker:
 
     def unsubscribe(
             self,
-            component: Optional[Component],
             listener: EventListener
     ) -> None:
-        """Unsubscribe a listener from a component
-        If component is None, unsubscribe a global listener.
-        """
-        if component is None:
-            component = EventBroker.global_component
+        """Unsubscribe an event listener from a component"""
+        component = listener.subscriber
 
-        self._unsubscribe(component=component, listener=listener)
-
-
-    def _unsubscribe(
-            self,
-            component: Component,
-            listener: EventListener
-    ) -> None:
-        """Unsubscribe a listener from a component"""
         if listener in self.subscribers[component]:
             self.listeners[listener.event].remove(listener)
             self.subscribers[component].remove(listener)
@@ -112,10 +114,13 @@ class EventBroker:
             pass
 
     def handle(self, event: Event) -> tuple[list[Callback], list[Callback]]:
-        """Find the corresponding listeners and prepare their callbacks"""
+        """Find the corresponding listeners for an event and prepare their
+        callbacks."""
         pre_composit_hook = []
         post_composit_hook = []
 
+        # Convert MouseEvent to _MouseEvent, since that is what listeners are
+        # subscribed to
         if isinstance(event, MouseEvent):
             event = event.event.value
 
