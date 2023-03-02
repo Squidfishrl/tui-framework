@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
+from tui._coordinates import Coordinates, Rectangle
 from tui.area import Area
 from tui.component_node import CMNode
 from tui.style import Style
@@ -28,6 +29,13 @@ class Component(CMNode):
         self._focus = False
 
         self.__area = Area(self.__style.area_info)
+
+        # rect mapping is the rectangle which this child component resides in,
+        # using absolute coordinates (relative to its parent-moost (root)
+        # component). We can learn the rect mapping only during composition,
+        # hence where it's set.
+        self.__rect_mapping: Optional[Rectangle] = None
+
         super().__init__(identifier=identifier)
 
     def add_border(self, border: Border) -> None:
@@ -46,6 +54,32 @@ class Component(CMNode):
     def has_focus(self) -> bool:
         """Does the component have focus?"""
         return self._focus
+
+    def find_component(self, coordinates: Coordinates) -> Optional[Component]:
+        """Find the child-most component which encapsulates the coordinates we
+        search by. A recursive depth search is performed on the component tree.
+        """
+        # recursion exit condition
+        if self._rect_mapping is None or coordinates not in self._rect_mapping:
+            return None
+
+        for child in self.children:
+            child_match = child.find_component(coordinates)
+            if child_match is not None:
+                return child_match
+
+    @property
+    def _rect_mapping(self) -> Optional[Rectangle]:
+        """Get the rectangle (absolute coordinates) this component is mapped
+        to. Returns None if component is yet to be mapped."""
+        return self.__rect_mapping
+
+    @_rect_mapping.setter
+    def _rect_mapping(self, rect: Optional[Rectangle]) -> None:
+        """Set the rectangle (absolute coordinates), this component is mapped
+        to. Set to None the component isn't mapped. This method should be
+        called by the compositor."""
+        self.__rect_mapping = rect
 
     @property
     def style(self) -> Style:

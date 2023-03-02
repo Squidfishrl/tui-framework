@@ -43,6 +43,8 @@ class Compositor:
         for callback in pre_composit:
             callback(event)
 
+        # set root rect mapping to itself
+        root._rect_mapping = root.area.model.area_rect
         new_area = Compositor._compose(root=root)
 
         for callback in post_composit:
@@ -70,6 +72,7 @@ class Compositor:
                         prev_rect=prev_rect,
                         component=child
                     )
+                child._row_mapper = prev_rect
             except CoordinateError as exc:
                 raise InsufficientAreaError(
                         "Component area isn't large enough"

@@ -91,6 +91,24 @@ class App():
                 post_composition=lambda event: show_cursor(event)
         )
 
+        def set_focus(event: MouseEvent) -> None:
+            """Set focus to a component, once it's clicked"""
+            focus_component = self.root.find_component(event.coordinates)
+            if (focus_component is None or
+                    focus_component == set_focus.prev_component):
+                return
+
+            set_focus.prev_component._focus = False
+            focus_component._focus = True
+            set_focus.prev_component = focus_component
+
+        set_focus.prev_component = None
+        self.event_broker.subscribe(
+                event=MouseEventTypes.MOUSE_LEFT_CLICK,
+                subscriber=None,
+                pre_composition=lambda event: set_focus(event)
+        )
+
     @property
     def root(self) -> Container:
         """Get the root component"""
@@ -109,7 +127,7 @@ class App():
 
         while True:
             # read from stdin
-            control_code = self.__terminal.read_bytes(bytes=16).decode()
+            control_code = self.__terminal.read_bytes(_bytes=16).decode()
             # check if it's a control sequence or a simple key press
             if len(control_code) == 1:
                 self.event_queue.put(HotkeyEvent(control_code))
@@ -134,17 +152,22 @@ class App():
         input_thread.start()
 
         try:
+            pre_composit_hook = []
+            post_composit_hook = []
             while True:
-                if self.event_queue.qsize() > 0:
+                while self.event_queue.qsize() > 0:
+                    # TODO: process all events
                     event = self.event_queue.get()
-                    pre_composit_hooks, post_composit_hooks = (
-                            self.event_broker.handle(event)
-                        )
+                    self.event_broker.handle(
+                            event=event,
+                            pre_composit_hook=pre_composit_hook,
+                            post_composit_hook=post_composit_hook
+                    )
                     print(
                             Compositor.compose(
                                     self.root,
-                                    pre_composit=pre_composit_hooks,
-                                    post_composit=post_composit_hooks,
+                                    pre_composit=pre_composit_hook,
+                                    post_composit=post_composit_hook,
                                     event=event),
                             end=''
                         )

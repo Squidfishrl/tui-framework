@@ -113,11 +113,15 @@ class EventBroker:
             # Do nothing if no events exist for this component
             pass
 
-    def handle(self, event: Event) -> tuple[list[Callback], list[Callback]]:
+    def handle(
+            self,
+            event: Event,
+            pre_composit_hook: list[Callback],
+            post_composit_hook: list[Callback]
+    ) -> None:
         """Find the corresponding listeners for an event and prepare their
-        callbacks."""
-        pre_composit_hook = []
-        post_composit_hook = []
+        callbacks. The callbacks are appended to the pre/post composite hooks.
+        """
 
         # Convert MouseEvent to _MouseEvent, since that is what listeners are
         # subscribed to
@@ -132,6 +136,4 @@ class EventBroker:
                     post_composit_hook.append(listener.post_composition)
         except KeyError:
             # Do nothing if event isn't listened to
-            pass
-
-        return pre_composit_hook, post_composit_hook
+            return
