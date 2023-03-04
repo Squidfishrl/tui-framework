@@ -86,8 +86,8 @@ class Style:
     @staticmethod
     def fromstr(string: str) -> Style:
         """Generate a style from a string that defines the deviations from the
-        default style values. The string should be formatted in the following 
-        syntax: 'attribute=value, ...' 
+        default style values. The string should be formatted in the following
+        syntax: 'attribute=value, ...'
         See 'Parser.valid_str_to_style_pattern' for more details"""
         if not re.fullmatch(Parser.valid_str_to_style_pattern, string):
             raise ValueError("Invalid string format")

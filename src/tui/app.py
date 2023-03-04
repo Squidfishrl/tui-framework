@@ -2,9 +2,19 @@
 
 from __future__ import annotations
 
+import threading
 from typing import Optional
+from queue import Queue
 
+import colorama
+
+from tui._coordinates import Coordinates
+from tui.components.container import Container
 from tui.compositor import Compositor
+from tui.events.event import Event
+from tui.events.event_broker import EventBroker
+from tui.events.mouse import MouseEventTypes
+from tui.events.mouse_event import MouseEvent
 from tui.styles.border import DefaultBorder
 from tui.terminal import Terminal
 from tui.components.division import Division
@@ -14,6 +24,7 @@ class App():
     """Contains everything necessary for running the application."""
     def __init__(
             self,
+            fps: int = 60,  # frames per second
             # static row and col amount (in case terminal fails)
             rows: Optional[int] = None,
             columns: Optional[int] = None,
@@ -25,15 +36,150 @@ class App():
             columns = self.__terminal.columns
         except OSError:
             pass
+        self.event_queue: Queue[Event] = Queue()
+        self.frequency = 1 / fps
 
         # Create a root element with the size of the terminal resolution
-        self.root = Division(style=f"rows={rows}, columns={columns}")
+        self._root = Division(style=f"rows={rows}, columns={columns}")
+        self.root = self._root
+
+        self.event_broker = EventBroker()
+
+        def show_cursor(event: MouseEvent):
+            """Draw cursor and change its position every move event"""
+            area = show_cursor.area
+
+            def draw_cursor() -> None:
+                try:
+                    row = event.coordinates.row
+                    col = event.coordinates.column
+                    area[row][col] = (
+                            colorama.Fore.BLACK + colorama.Back.WHITE +
+                            area[row][col] +
+                            colorama.Style.RESET_ALL
+                        )
+                except IndexError:
+                    pass
+
+            def undraw_cursor() -> None:
+                row = show_cursor.prev_coords.row
+                col = show_cursor.prev_coords.column
+                try:
+                    area[row][col] = show_cursor.prev_value
+                except IndexError:
+                    pass
+
+            prev_value = show_cursor.prev_value
+            try:
+                prev_value = (
+                        area[event.coordinates.row][event.coordinates.column]
+                    )
+            except IndexError:
+                pass
+
+            draw_cursor()
+            undraw_cursor()
+            show_cursor.prev_value = prev_value
+            show_cursor.prev_coords = event.coordinates
+
+        show_cursor.prev_coords = Coordinates(0, 0)
+        show_cursor.prev_value = self._root.area.char_area[0][0]
+        show_cursor.area = self._root.area.char_area
+        self.event_broker.subscribe(
+                event=MouseEventTypes.MOUSE_MOVE,
+                subscriber=None,
+                post_composition=lambda event: show_cursor(event)
+        )
+
+        def set_focus(event: MouseEvent) -> None:
+            """Set focus to a component, once it's clicked"""
+            focus_component = self.root.find_component(event.coordinates)
+            if (focus_component is None or
+                    focus_component == set_focus.prev_component):
+                return
+
+            set_focus.prev_component._focus = False
+            focus_component._focus = True
+            set_focus.prev_component = focus_component
+
+        set_focus.prev_component = None
+        self.event_broker.subscribe(
+                event=MouseEventTypes.MOUSE_LEFT_CLICK,
+                subscriber=None,
+                pre_composition=lambda event: set_focus(event)
+        )
+
+    @property
+    def root(self) -> Container:
+        """Get the root component"""
+        return self._root
+
+    @root.setter
+    def root(self, new_root: Container) -> None:
+        """Change the root component"""
+        self._root = new_root
+
+    def get_events(self) -> None:
+        """Continuously fetch events and put them in the event queue."""
+        from tui.events._mouse_parser import MouseParser
+        from tui.events.key_event import HotkeyEvent
+        from tui.events.keys import ANSI_SEQUENCES_KEYS
+
+        while True:
+            # read from stdin
+            control_code = self.__terminal.read_bytes(_bytes=16).decode()
+            # check if it's a control sequence or a simple key press
+            if len(control_code) == 1:
+                self.event_queue.put(HotkeyEvent(control_code))
+                continue
+
+            # check if it's a mouse control code and add to the event queue
+            try:
+                self.event_queue.put(
+                        HotkeyEvent(ANSI_SEQUENCES_KEYS[control_code])
+                    )
+            except KeyError:
+                self.event_queue.put(MouseParser.get_mouse_event(control_code))
 
     def run(self) -> None:
         """Start and constantly update the app."""
-        print(Compositor.compose(self.root), end='')
-        while True:
-            pass
+        input_thread = threading.Thread(
+                target=self.get_events,
+                args=(),
+                daemon=True
+            )
+
+        input_thread.start()
+
+        try:
+            pre_composit_hook = []
+            post_composit_hook = []
+            while True:
+                while self.event_queue.qsize() > 0:
+                    # TODO: process all events
+                    event = self.event_queue.get()
+                    self.event_broker.handle(
+                            event=event,
+                            pre_composit_hook=pre_composit_hook,
+                            post_composit_hook=post_composit_hook
+                    )
+                    print(
+                            Compositor.compose(
+                                    self.root,
+                                    pre_composit=pre_composit_hook,
+                                    post_composit=post_composit_hook,
+                                    event=event),
+                            end=''
+                        )
+
+                # time.sleep(self.frequency)
+        except KeyboardInterrupt:
+            self.__terminal.disable_mouse()
+            self.__terminal.disable_input()
+        except BaseException as e:
+            self.__terminal.disable_mouse()
+            self.__terminal.disable_input()
+            raise e
 
 
 def main():

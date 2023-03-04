@@ -16,12 +16,17 @@ from tui._node_list import NodeList
 class CMNode(ABC):
     """Base object in the model. An abstract class, handling the treelike
     structure"""
+    id_counter = 0
 
     def __init__(
             self,
             identifier: Optional[str] = None,  # Unique node id
     ) -> None:
-        self.__id = identifier
+        if identifier is None:
+            self.__id = str(CMNode.id_counter)
+            CMNode.id_counter += 1
+        else:
+            self.__id = identifier
         self.__children: NodeList = NodeList()
 
     @property
@@ -36,3 +41,9 @@ class CMNode(ABC):
         components (widgets) may not have children, or the order of the
         children could be changed."""
         return self.__children
+
+    def __eq__(self, other):
+        return self.id == other.id  # always false
+
+    def __hash__(self):
+        return hash(self.id)

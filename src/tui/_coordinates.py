@@ -122,6 +122,13 @@ class Rectangle:
                 _column=top_left.column
             )
 
+    def __contains__(self, coordinates: Coordinates) -> bool:
+        """Check if coordinates are contained within a rectangle."""
+        return ((coordinates.row >= self.top_left.row and
+                 coordinates.row <= self.bottom_right.row) and
+                (coordinates.column >= self.top_left.column and
+                 coordinates.column <= self.bottom_right.column))
+
     def inner_rect(
             self,
             top_offset: int,

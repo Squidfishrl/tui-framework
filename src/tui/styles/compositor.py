@@ -13,6 +13,11 @@ class Orientation(Enum):
 @dataclass
 class CompositorInfo:
     """Define properties that affect component composition"""
+    # if the component's child has focus
+    # this component will also have focus
+    # TODO: implement
+    steal_focus: bool = False
+
     _display: Orientation = Orientation.BLOCK
 
     @property

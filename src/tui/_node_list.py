@@ -42,7 +42,7 @@ class NodeList(Sequence):
     def __contains__(self, component: Component) -> bool:
         return component in self._nodes_list
 
-    def get_component_with_id(self, identifier: str) -> Optional[Component]:
+    def get_by_id(self, identifier: str) -> Optional[Component]:
         """Get component (search by id)"""
         return self._nodes_dict.get(identifier)
 

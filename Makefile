@@ -18,4 +18,4 @@ flake8:
 .PHONY: pylint
 pylint:
 	pylint $(TEST) --disable=R0801
-	pylint $(SRC) 
+	pylint $(SRC) --disable=C0103

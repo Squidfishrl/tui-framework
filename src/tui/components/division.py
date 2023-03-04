@@ -15,14 +15,14 @@ class Division(Container):
     """A container with vertical (block) orientation"""
     def __init__(
             self,
+            *children: Component,  # Child components
             style: str | Style = Style(),  # Style properties for the component
             identifier: Optional[str] = None,  # Unique identifier
-            *children: Component  # Child components
     ) -> None:
         super().__init__(
+                *children,
                 identifier=identifier,
                 style=style,
-                *children
             )
 
     @property

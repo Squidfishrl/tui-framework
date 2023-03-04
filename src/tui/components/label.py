@@ -19,9 +19,9 @@ class Label(Widget):
     """
     def __init__(
             self,
+            label_text: str = "",  # The text that's displayed on the label
             style: str | Style = Style(),  # Style properties for the component
             identifier: Optional[str] = None,  # Unique identifier
-            label_text: str = ""  # The text that's displayed on the label
     ) -> None:
         super().__init__(identifier=identifier, style=style)
         self.text = label_text
@@ -30,6 +30,12 @@ class Label(Widget):
         """Render the label's text to its area"""
         self.area.area_ptr.reset_coords()
         self.area.add_chars(self.text)
+
+    def clear(self) -> None:
+        """Clear existing area"""
+        self.text = (self.area.model.with_padding.columns *
+                     self.area.model.with_padding.rows *
+                     " ")
 
     @property
     def text(self) -> str:
