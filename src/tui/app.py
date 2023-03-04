@@ -42,8 +42,6 @@ class App():
         self._root = Division(style=f"rows={rows}, columns={columns}")
         self.root = self._root
 
-        self.event_broker = EventBroker()
-
         def show_cursor(event: MouseEvent):
             """Draw cursor and change its position every move event"""
             area = show_cursor.area
@@ -73,7 +71,7 @@ class App():
         show_cursor.prev_coords = Coordinates(0, 0)
         show_cursor.prev_value = self._root.area.char_area[0][0]
         show_cursor.area = self._root.area.char_area
-        self.event_broker.subscribe(
+        EventBroker.subscribe(
                 event=MouseEventTypes.MOUSE_MOVE,
                 subscriber=None,
                 post_composition=show_cursor
@@ -91,7 +89,7 @@ class App():
             set_focus.prev_component = focus_component
 
         set_focus.prev_component = None
-        self.event_broker.subscribe(
+        EventBroker.subscribe(
                 event=MouseEventTypes.MOUSE_LEFT_CLICK,
                 subscriber=None,
                 pre_composition=set_focus
@@ -146,7 +144,7 @@ class App():
             while True:
                 while self.event_queue.qsize() > 0:
                     event = self.event_queue.get()
-                    self.event_broker.handle(
+                    EventBroker.handle(
                             event=event,
                             pre_composit_hook=pre_composit_hook,
                             post_composit_hook=post_composit_hook

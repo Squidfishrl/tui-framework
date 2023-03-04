@@ -8,6 +8,8 @@ from tui.component import Component
 from tui.components.division import Division
 from tui.events.event import Event
 from tui.events.event_listener import Callback, EventListener
+from tui.events.key_event import HotkeyEvent
+from tui.events.keys import Keys
 from tui.events.mouse import MouseEventTypes
 from tui.events.mouse_event import MouseEvent
 
@@ -16,14 +18,13 @@ class EventBroker:
     """Responsible for managing event subscription and event callbacks"""
 
     # a 'subscriber' with id ==  -1 is used to signify a global event
-    global_component = Division(identifier='-1')
+    __global_component = Division(identifier='-1')
 
-    def __init__(self):
-        self.listeners: dict[Event, list[EventListener]] = {}
-        self.subscribers: dict[Component, list[EventListener]] = {}
+    listeners: dict[Event, list[EventListener]] = {}
+    subscribers: dict[Component, list[EventListener]] = {}
 
+    @staticmethod
     def subscribe(
-            self,
             event: Event | MouseEventTypes,  # the event we listen for
             # the subscriber component must have focus before the event
             # callbacks
@@ -40,20 +41,19 @@ class EventBroker:
         """
         if isinstance(event, MouseEventTypes):
             _event = event.value
-            print(_event)
         else:
             _event = event
 
         if subscriber is None:
-            subscriber = EventBroker.global_component
+            subscriber = EventBroker.__global_component
 
-        return self._subscribe(event=_event,
-                               subscriber=subscriber,
-                               pre_composition=pre_composition,
-                               post_composition=post_composition)
+        return EventBroker._subscribe(event=_event,
+                                      subscriber=subscriber,
+                                      pre_composition=pre_composition,
+                                      post_composition=post_composition)
 
+    @staticmethod
     def _subscribe(
-            self,
             event: Event,
             subscriber: Component,
             pre_composition: Optional[Callback] = None,
@@ -64,8 +64,8 @@ class EventBroker:
         the pre_composition function is called back, then global composition
         occurs, then post_composition functions are executed.
 
-        This is an inner function, only to be called by self.subscribe after
-        arguments are handled.
+        This is an inner function, only to be called by EventBroker.subscribe
+        after arguments are handled.
         """
 
         listener = EventListener(
@@ -75,46 +75,45 @@ class EventBroker:
                     post_composition=post_composition
                 )
 
-        if self.listeners.get(event) is None:
+        if EventBroker.listeners.get(event) is None:
             # if no event entry exists in the dictionary, create a new one
-            self.listeners[event] = [listener]
+            EventBroker.listeners[event] = [listener]
         else:
             # if one already exists, append the new event listener
-            self.listeners[event].append(listener)
+            EventBroker.listeners[event].append(listener)
 
-        if self.subscribers.get(subscriber) is None:
+        if EventBroker.subscribers.get(subscriber) is None:
             # if no event entry exists in the dictionary, create a new one
-            self.subscribers[subscriber] = [listener]
+            EventBroker.subscribers[subscriber] = [listener]
         else:
             # if one already exists, append the new event listener
-            self.subscribers[subscriber].append(listener)
+            EventBroker.subscribers[subscriber].append(listener)
 
         return listener
 
-    def unsubscribe(
-            self,
-            listener: EventListener
-    ) -> None:
+    @staticmethod
+    def unsubscribe(listener: EventListener) -> None:
         """Unsubscribe an event listener from a component"""
         component = listener.subscriber
 
-        if listener in self.subscribers[component]:
-            self.listeners[listener.event].remove(listener)
-            self.subscribers[component].remove(listener)
+        if listener in EventBroker.subscribers[component]:
+            EventBroker.listeners[listener.event].remove(listener)
+            EventBroker.subscribers[component].remove(listener)
 
-    def unsubscribe_all(self, component: Component) -> None:
+    @staticmethod
+    def unsubscribe_all(component: Component) -> None:
         """Unsubscribe all listeners for a component"""
         try:
-            for listener in self.subscribers[component]:
-                self.listeners[listener.event].remove(listener)
-                self.subscribers[component].remove(listener)
-            del self.subscribers[component]
+            for listener in EventBroker.subscribers[component]:
+                EventBroker.listeners[listener.event].remove(listener)
+                EventBroker.subscribers[component].remove(listener)
+            del EventBroker.subscribers[component]
         except KeyError:
             # Do nothing if no events exist for this component
             pass
 
+    @staticmethod
     def handle(
-            self,
             event: Event,
             pre_composit_hook: list[Callback],
             post_composit_hook: list[Callback]
@@ -122,6 +121,16 @@ class EventBroker:
         """Find the corresponding listeners for an event and prepare their
         callbacks. The callbacks are appended to the pre/post composite hooks.
         """
+
+        def handle_listener(listener: EventListener, event: Event) -> None:
+            if listener.pre_composition is not None:
+                pre_composit_hook.append(
+                        lambda: listener.pre_composition(event)
+                    )
+            if listener.post_composition is not None:
+                post_composit_hook.append(
+                        lambda: listener.post_composition(event)
+                    )
 
         # Convert MouseEvent to _MouseEvent, since that is what listeners are
         # subscribed to
@@ -131,15 +140,19 @@ class EventBroker:
             _event = event
 
         try:
-            for listener in self.listeners[_event]:
-                if listener.pre_composition is not None:
-                    pre_composit_hook.append(
-                            lambda: listener.pre_composition(event)
-                        )
-                if listener.post_composition is not None:
-                    post_composit_hook.append(
-                            lambda: listener.post_composition(event)
-                        )
+            for listener in EventBroker.listeners[_event]:
+                handle_listener(listener, event)
+
+        except KeyError:
+            # Do nothing if event isn't listened to
+            return
+
+        # handle listeners to all keys
+        try:
+            if not isinstance(event, HotkeyEvent):
+                return
+            for listener in EventBroker.listeners[HotkeyEvent(Keys.Any)]:
+                handle_listener(listener, event)
         except KeyError:
             # Do nothing if event isn't listened to
             return
