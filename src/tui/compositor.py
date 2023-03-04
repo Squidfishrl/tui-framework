@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Optional
 
 from tui._coordinates import Coordinates, Rectangle, CoordinateError
 from tui.component import Area
-from tui.events.event import Event
 from tui.events.event_listener import Callback
 from tui.styles.compositor import Orientation
 
@@ -34,21 +33,20 @@ class Compositor:
     def compose(
             root: Component,  # the component which's area is being composed
             pre_composit: list[Callback],
-            post_composit: list[Callback],
-            event: Event
+            post_composit: list[Callback]
     ) -> Area:
         """Compose a component with its children components recursively. Run
         pre-compose and post-compose hooks
         """
         for callback in pre_composit:
-            callback(event)
+            callback()
 
         # set root rect mapping to itself
         root._rect_mapping = root.area.model.area_rect
         new_area = Compositor._compose(root=root)
 
         for callback in post_composit:
-            callback(event)
+            callback()
 
         return new_area
 

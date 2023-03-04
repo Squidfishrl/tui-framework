@@ -126,14 +126,20 @@ class EventBroker:
         # Convert MouseEvent to _MouseEvent, since that is what listeners are
         # subscribed to
         if isinstance(event, MouseEvent):
-            event = event.event.value
+            _event = event.event.value
+        else:
+            _event = event
 
         try:
-            for listener in self.listeners[event]:
+            for listener in self.listeners[_event]:
                 if listener.pre_composition is not None:
-                    pre_composit_hook.append(listener.pre_composition)
+                    pre_composit_hook.append(
+                            lambda: listener.pre_composition(event)
+                        )
                 if listener.post_composition is not None:
-                    post_composit_hook.append(listener.post_composition)
+                    post_composit_hook.append(
+                            lambda: listener.post_composition(event)
+                        )
         except KeyError:
             # Do nothing if event isn't listened to
             return

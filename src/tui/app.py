@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import threading
+from time import perf_counter
 from typing import Optional
 from queue import Queue
-
-import colorama
 
 from tui._coordinates import Coordinates
 from tui.components.container import Container
@@ -50,32 +49,21 @@ class App():
             area = show_cursor.area
 
             def draw_cursor() -> None:
-                try:
-                    row = event.coordinates.row
-                    col = event.coordinates.column
-                    area[row][col] = (
-                            colorama.Fore.BLACK + colorama.Back.WHITE +
-                            area[row][col] +
-                            colorama.Style.RESET_ALL
-                        )
-                except IndexError:
-                    pass
+                row = event.coordinates.row
+                col = event.coordinates.column
+                area[row][col] = ("\x1b[30;47" + area[row][col])
 
             def undraw_cursor() -> None:
                 row = show_cursor.prev_coords.row
                 col = show_cursor.prev_coords.column
-                try:
-                    area[row][col] = show_cursor.prev_value
-                except IndexError:
-                    pass
+                area[row][col] = show_cursor.prev_value
 
-            prev_value = show_cursor.prev_value
             try:
                 prev_value = (
                         area[event.coordinates.row][event.coordinates.column]
                     )
             except IndexError:
-                pass
+                return
 
             draw_cursor()
             undraw_cursor()
@@ -88,7 +76,7 @@ class App():
         self.event_broker.subscribe(
                 event=MouseEventTypes.MOUSE_MOVE,
                 subscriber=None,
-                post_composition=lambda event: show_cursor(event)
+                post_composition=show_cursor
         )
 
         def set_focus(event: MouseEvent) -> None:
@@ -106,7 +94,7 @@ class App():
         self.event_broker.subscribe(
                 event=MouseEventTypes.MOUSE_LEFT_CLICK,
                 subscriber=None,
-                pre_composition=lambda event: set_focus(event)
+                pre_composition=set_focus
         )
 
     @property
@@ -154,25 +142,27 @@ class App():
         try:
             pre_composit_hook = []
             post_composit_hook = []
+            timer_start = perf_counter()
             while True:
                 while self.event_queue.qsize() > 0:
-                    # TODO: process all events
                     event = self.event_queue.get()
                     self.event_broker.handle(
                             event=event,
                             pre_composit_hook=pre_composit_hook,
                             post_composit_hook=post_composit_hook
                     )
-                    print(
-                            Compositor.compose(
+
+                if perf_counter() - timer_start >= self.frequency:
+                    self.__terminal.print(
+                            str(Compositor.compose(
                                     self.root,
                                     pre_composit=pre_composit_hook,
-                                    post_composit=post_composit_hook,
-                                    event=event),
-                            end=''
+                                    post_composit=post_composit_hook))
                         )
+                    timer_start = perf_counter()
+                    pre_composit_hook = []
+                    post_composit_hook = []
 
-                # time.sleep(self.frequency)
         except KeyboardInterrupt:
             self.__terminal.disable_mouse()
             self.__terminal.disable_input()
@@ -184,7 +174,7 @@ class App():
 
 def main():
     """Run an app"""
-    app: App = App()
+    app: App = App(fps=60)
     app.root.add_border(DefaultBorder)
     app.run()
 
