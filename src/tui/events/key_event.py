@@ -3,6 +3,8 @@ of keys(hotkey). Do note that some terminals cannot report keys in VT100 mode,
 or they might use a different bytes for reporting them which can result in
 limited/false events being reported."""
 
+from __future__ import annotations
+
 from tui.events.event import Event, Modifiers
 from tui.events.keys import Keys
 
@@ -34,3 +36,6 @@ class HotkeyEvent(Event):
 
         self.keys = frozenset(normal_keys)
         super().__init__(frozenset(modifier_list))
+
+    def __eq__(self, __o: HotkeyEvent) -> bool:
+        return self.keys == __o.keys and self.modifiers == __o.modifiers
