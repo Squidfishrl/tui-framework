@@ -6,13 +6,22 @@
 \usepackage[T2A, T1]{fontenc}  % there may be non-ascii chars
 \usepackage[utf8]{inputenc}  % there may be unicode
 \usepackage[main=bulgarian,english]{babel}  % bulgarian support
-\usepackage{xcolor}  % colored text
 \usepackage{graphicx}  % for using images
 \usepackage[margin=1in]{geometry}  % page dimensions
 \usepackage{hyperref}  % meta
 \usepackage{indentfirst}  % indent the first paragraph line
 \usepackage{setspace}  % change line spacing 
 \usepackage{float}  % allow for stricter graphicx options
+\usepackage{pdfpages}
+\usepackage{xcolor}  % colored text
+\definecolor{comment}{HTML}{7F848E}
+\definecolor{keyword}{HTML}{88aaee}
+\definecolor{function}{HTML}{bb66ff}
+\definecolor{type}{HTML}{2266ff}
+\definecolor{string}{HTML}{d0ac55}
+\definecolor{directive}{HTML}{966440}
+\definecolor{background-code}{rgb}{0.95,0.95,0.95}
+\definecolor{background-shell}{rgb}{0.3,0.3,0.3}
 
 \newcommand{\thesisTitle}{Библиотека за създаване на текстов потребителски интерфейс}
 \newcommand{\thesisAuthor}{Ивайло Генчев}
@@ -20,6 +29,7 @@
 \newcommand{\thesisSubject}{\thesisTitle}
 \newcommand{\thesisSchool}{ТЕХНОЛОГИЧНО УЧИЛИЩЕ ЕЛЕКТРОННИ СИСТЕМИ}
 \newcommand{\thesisUniversity}{ТЕХНИЧЕСКИ УНИВЕРСИТЕТ - СОФИЯ}
+\newcommand{\figref}[1]{(фиг. \ref{#1})}
 
 \hypersetup {
         pdftitle={\thesisTitle},
@@ -30,27 +40,71 @@
         unicode=true,
 }
 
+% \usepackage[acronym, toc]{glossaries}
+% \makenoidxgloassaries
+% \newacronym{dom}{DOM}{Document Object Model}
+% \newacronym{srp}{SRP}{Single-responsibility principle}
+% \newacronym{regex}{REGEX}{Regular Expression}
+% \newacronym{од}{OD}{Обхождане в дълбочина (Depth-first search)}
+
+\usepackage{listings}
+\usepackage[scale=.85]{sourcecodepro}  % have code snippets
+\renewcommand{\lstlistingname}{Списък}
+\lstdefinestyle{shell}{
+    basicstyle=\ttfamily\small\color{white},
+    backgroundcolor=\color{background-shell},
+    rulecolor=\color{background-shell},
+    language=sh,
+    tabsize=4,
+    captionpos=b,
+    keywordstyle=\color{comment},
+    framexleftmargin=6pt,
+    framextopmargin=6pt,
+    framexbottommargin=6pt,
+    frame=ltbr,
+    frameround=tttt,
+}
+\lstdefinestyle{py}{
+        basicstyle=\ttfamily\footnotesize,
+        backgroundcolor=\color{background-code},
+        rulecolor=\color{background-code},
+        language=Python,
+        tabsize=4,
+        captionpos=b,
+        numbers=left,
+        numberstyle=\ttfamily\color{gray},
+        keywordstyle=\color{keyword}\textbf,
+        commentstyle=\color{comment}\textit,
+        stringstyle=\color{string},
+        % directivestyle=\color{directive}\textit,
+        xleftmargin=20pt,
+        framexleftmargin=26pt,
+        framextopmargin=6pt,
+        framexbottommargin=6pt,
+        frame=ltbr,
+        frameround=tttt,
+}
+
 \begin{document}
 \onehalfspacing
 \fontsize{14pt}{20}\selectfont  % change font size to 14pt
 
 \input{chapters/title_page}
-\input{chapters/blank_page}
+\includepdf[pages=-]{chapters/reviewer.pdf}
+% \input{chapters/blank_page}
+% \printnoidxglossary[type=\acronymtype, title={Използвани съкращения}, sort=def]
+% \addcontentsline{toc}{chapter}{Увод}
+\tableofcontents
 \input{chapters/00_Introduction}
 \input{chapters/01_Research}
 
-\chapter{Глава 2}
 \input{chapters/02_Requirements}
 
-\chapter{Глава 3}
 \input{chapters/03_Implementation}
 
-\chapter{Глава 4}
 \input{chapters/04_UserGuide}
 
-\chapter{Заключение}
 \input{chapters/05_Conclusion}
 
-\tableofcontents
 
 \end{document}
