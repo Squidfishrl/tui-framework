@@ -12,7 +12,7 @@
 \usepackage{indentfirst}  % indent the first paragraph line
 \usepackage{setspace}  % change line spacing 
 \usepackage{float}  % allow for stricter graphicx options
-\usepackage{pdfpages}
+\usepackage{pdfpages}  % allow pdfs as pages
 \usepackage{xcolor}  % colored text
 \definecolor{comment}{HTML}{7F848E}
 \definecolor{keyword}{HTML}{88aaee}
@@ -36,16 +36,17 @@
         pdfsubject={\thesisSubject},
         pdfauthor={\thesisAuthor},
         plainpages=false,
-        colorlinks=false,
+        colorlinks=true,
+        allcolors=blue,
         unicode=true,
 }
 
-\usepackage[acronym, toc]{glossaries}
-\makenoidxgloassaries
-\newacronym{dom}{DOM}{Document Object Model}
-\newacronym{srp}{SRP}{Single-responsibility principle}
-\newacronym{regex}{REGEX}{Regular Expression}
-\newacronym{од}{OD}{Обхождане в дълбочина (Depth-first search)}
+% \usepackage[acronym, toc]{glossaries}
+% \makenoidxgloassaries
+% \newacronym{dom}{DOM}{Document Object Model}
+% \newacronym{srp}{SRP}{Single-responsibility principle}
+% \newacronym{regex}{REGEX}{Regular Expression}
+% \newacronym{од}{OD}{Обхождане в дълбочина (Depth-first search)}
 
 \usepackage{listings}
 \usepackage[scale=.85]{sourcecodepro}  % have code snippets
@@ -85,15 +86,20 @@
         frameround=tttt,
 }
 
+\usepackage{biblatex}
+\addbibresource{references.bib}
+
 \begin{document}
 \onehalfspacing
 \fontsize{14pt}{20}\selectfont  % change font size to 14pt
 
 \input{chapters/title_page}
+% \includepdf[pages=-]{chapters/zadanie.pdf}
 \includepdf[pages=-]{chapters/reviewer.pdf}
 % \input{chapters/blank_page}
-\printnoidxglossary[type=\acronymtype, title={Използвани съкращения}, sort=def]
+% \printnoidxglossary[type=\acronymtype, title={Използвани съкращения}, sort=def]
 % \addcontentsline{toc}{chapter}{Увод}
+\input{chapters/acronyms}
 \tableofcontents
 \input{chapters/00_Introduction}
 \input{chapters/01_Research}
@@ -105,6 +111,9 @@
 \input{chapters/04_UserGuide}
 
 \input{chapters/05_Conclusion}
+
+\nocite{*}
+\printbibliography
 
 
 \end{document}

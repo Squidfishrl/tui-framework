@@ -1,0 +1,170 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{tty}{online}{}
+      \name{author}{1}{}{%
+        {{hash=411756466ff3fb37500a620447b0eb99}{%
+           family={Åkesson},
+           familyi={Å\bibinitperiod},
+           given={Linus},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{411756466ff3fb37500a620447b0eb99}
+      \strng{fullhash}{411756466ff3fb37500a620447b0eb99}
+      \strng{bibnamehash}{411756466ff3fb37500a620447b0eb99}
+      \strng{authorbibnamehash}{411756466ff3fb37500a620447b0eb99}
+      \strng{authornamehash}{411756466ff3fb37500a620447b0eb99}
+      \strng{authorfullhash}{411756466ff3fb37500a620447b0eb99}
+      \field{sortinit}{Å}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The TTY demystified}
+      \verb{urlraw}
+      \verb http://www.linusakesson.net/programming/tty/index.php?tty
+      \endverb
+      \verb{url}
+      \verb http://www.linusakesson.net/programming/tty/index.php?tty
+      \endverb
+    \endentry
+    \entry{gof}{book}{}
+      \name{author}{4}{}{%
+        {{hash=abd927bf30d6566be0ac66a66e893fdd}{%
+           family={Gamma},
+           familyi={G\bibinitperiod},
+           given={Erich},
+           giveni={E\bibinitperiod}}}%
+        {{hash=233f891813bda0f3920985f97a4a7554}{%
+           family={Helm},
+           familyi={H\bibinitperiod},
+           given={Richard},
+           giveni={R\bibinitperiod}}}%
+        {{hash=fd79e5e249b219ff553fc2d811104d78}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={Ralph},
+           giveni={R\bibinitperiod}}}%
+        {{hash=e032589f0b9a38804483ab7cf5ccad7f}{%
+           family={Vlissides},
+           familyi={V\bibinitperiod},
+           given={John},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Addison-Wesley}%
+      }
+      \strng{namehash}{4d2492409a24d4ed208ae6670cb91945}
+      \strng{fullhash}{5cb4a6d7baf30d11bae6682eca698b4f}
+      \strng{bibnamehash}{4d2492409a24d4ed208ae6670cb91945}
+      \strng{authorbibnamehash}{4d2492409a24d4ed208ae6670cb91945}
+      \strng{authornamehash}{4d2492409a24d4ed208ae6670cb91945}
+      \strng{authorfullhash}{5cb4a6d7baf30d11bae6682eca698b4f}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Design patterns: elements of reusable object-oriented software}
+      \field{year}{1994}
+      \true{nocite}
+    \endentry
+    \entry{TIOBE}{online}{}
+      \name{author}{1}{}{%
+        {{hash=fb819fc2ee5a5322a718a25b704b5fcf}{%
+           family={Jansen},
+           familyi={J\bibinitperiod},
+           given={Paul},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{fb819fc2ee5a5322a718a25b704b5fcf}
+      \strng{fullhash}{fb819fc2ee5a5322a718a25b704b5fcf}
+      \strng{bibnamehash}{fb819fc2ee5a5322a718a25b704b5fcf}
+      \strng{authorbibnamehash}{fb819fc2ee5a5322a718a25b704b5fcf}
+      \strng{authornamehash}{fb819fc2ee5a5322a718a25b704b5fcf}
+      \strng{authorfullhash}{fb819fc2ee5a5322a718a25b704b5fcf}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{TIOBE Programming Community index}
+      \verb{urlraw}
+      \verb https://www.tiobe.com/tiobe-index/
+      \endverb
+      \verb{url}
+      \verb https://www.tiobe.com/tiobe-index/
+      \endverb
+    \endentry
+    \entry{semver}{online}{}
+      \name{author}{1}{}{%
+        {{hash=86c590c4ef15d0078286562a483eb052}{%
+           family={Preston-Werner},
+           familyi={P\bibinithyphendelim W\bibinitperiod},
+           given={Tom},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{86c590c4ef15d0078286562a483eb052}
+      \strng{fullhash}{86c590c4ef15d0078286562a483eb052}
+      \strng{bibnamehash}{86c590c4ef15d0078286562a483eb052}
+      \strng{authorbibnamehash}{86c590c4ef15d0078286562a483eb052}
+      \strng{authornamehash}{86c590c4ef15d0078286562a483eb052}
+      \strng{authorfullhash}{86c590c4ef15d0078286562a483eb052}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Semantic Versioning 2.0.0}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://semver.org
+      \endverb
+      \verb{url}
+      \verb https://semver.org
+      \endverb
+    \endentry
+    \entry{py-comp}{online}{}
+      \name{author}{1}{}{%
+        {{hash=ec2fa4cf56b8d30e74a150fe33d68f8b}{%
+           family={Rossum},
+           familyi={R\bibinitperiod},
+           given={Guido\bibnamedelima Van},
+           giveni={G\bibinitperiod\bibinitdelim V\bibinitperiod}}}%
+      }
+      \strng{namehash}{ec2fa4cf56b8d30e74a150fe33d68f8b}
+      \strng{fullhash}{ec2fa4cf56b8d30e74a150fe33d68f8b}
+      \strng{bibnamehash}{ec2fa4cf56b8d30e74a150fe33d68f8b}
+      \strng{authorbibnamehash}{ec2fa4cf56b8d30e74a150fe33d68f8b}
+      \strng{authornamehash}{ec2fa4cf56b8d30e74a150fe33d68f8b}
+      \strng{authorfullhash}{ec2fa4cf56b8d30e74a150fe33d68f8b}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Comparing Python to Other Languages}
+      \verb{urlraw}
+      \verb https://www.python.org/doc/essays/comparisons/
+      \endverb
+      \verb{url}
+      \verb https://www.python.org/doc/essays/comparisons/
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

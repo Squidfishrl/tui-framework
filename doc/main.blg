@@ -1,0 +1,15 @@
+[0] Config.pm:307> INFO - This is Biber 2.17
+[3] Config.pm:310> INFO - Logfile is 'main.blg'
+[87] biber:340> INFO - === ср мар 15, 2023, 16:59:55
+[103] Biber.pm:418> INFO - Reading 'main.bcf'
+[180] Biber.pm:969> INFO - Using all citekeys in bib section 0
+[196] Biber.pm:4383> INFO - Processing section 0
+[207] Biber.pm:4574> INFO - Looking for bibtex file 'references.bib' for section 0
+[209] bibtex.pm:1713> INFO - LaTeX decoding ...
+[216] bibtex.pm:1518> INFO - Found BibTeX data source 'references.bib'
+[296] UCollate.pm:68> INFO - Overriding locale 'bg-BG' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[296] UCollate.pm:68> INFO - Overriding locale 'bg-BG' defaults 'variable = shifted' with 'variable = non-ignorable'
+[296] Biber.pm:4203> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'bg-BG'
+[296] Biber.pm:4209> INFO - No sort tailoring available for locale 'bg-BG'
+[306] bbl.pm:654> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[308] bbl.pm:757> INFO - Output to main.bbl

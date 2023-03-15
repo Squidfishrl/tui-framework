@@ -1,0 +1,39 @@
+\babel@toc {bulgarian}{}\relax 
+\contentsline {chapter}{\numberline {1}Проучване}{8}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Терминали}{8}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}Телетайп терминал - TTY}{8}{subsection.1.1.1}%
+\contentsline {subsection}{\numberline {1.1.2}Псевдотелетайп терминал - PTY}{9}{subsection.1.1.2}%
+\contentsline {subsection}{\numberline {1.1.3}Терминален емулатор}{10}{subsection.1.1.3}%
+\contentsline {section}{\numberline {1.2}Контролни символи}{10}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}ANSI контролна последователност}{10}{subsection.1.2.1}%
+\contentsline {subsubsection}{Идентификатор на контролна последователност (CSI)}{11}{section*.5}%
+\contentsline {section}{\numberline {1.3}Преглед на съществуващи TUI библиотеки}{11}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}ncurses}{11}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.3.2}Textual}{12}{subsection.1.3.2}%
+\contentsline {chapter}{\numberline {2}Проектиране на библиотека за създаване на текстов потребителски интерфейс}{14}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Функционални изисквания}{14}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Подбор на средства за разработка}{15}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Програмен език}{15}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Статичен анализатор}{16}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Компонентно тестове}{16}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Система за управление на версиите}{16}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}Непрекъсната интерграция}{17}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.6}Среда за разработка}{18}{subsection.2.2.6}%
+\contentsline {chapter}{\numberline {3}Реализация на библиотека за създаване на текстов потребителски}{19}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Структура на проекта}{19}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Файлове с общо предназначение}{20}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Йерархия на компоненти}{21}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Вътрешно представяне на компонент}{23}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Видове компоненти}{25}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Композитор}{26}{section.3.6}%
+\contentsline {section}{\numberline {3.7}Визуализация на приложение}{29}{section.3.7}%
+\contentsline {section}{\numberline {3.8}Персонализиране на компоненти}{31}{section.3.8}%
+\contentsline {section}{\numberline {3.9}Издаване и обработка на събития}{32}{section.3.9}%
+\contentsline {section}{\numberline {3.10}Абониране за събития}{32}{section.3.10}%
+\contentsline {chapter}{\numberline {4}Ръководство за потребителя}{38}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Инсталиране на библиотеката}{38}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Сдобиване с кода на библиотеката}{38}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Инсталиране на библиотеката}{39}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Ръководство за обучение}{40}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Hello World!}{40}{subsection.4.2.1}%
+\contentsline {chapter}{\numberline {5}Заключение}{44}{chapter.5}%
