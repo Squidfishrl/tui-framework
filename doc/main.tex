@@ -40,12 +40,12 @@
         unicode=true,
 }
 
-% \usepackage[acronym, toc]{glossaries}
-% \makenoidxgloassaries
-% \newacronym{dom}{DOM}{Document Object Model}
-% \newacronym{srp}{SRP}{Single-responsibility principle}
-% \newacronym{regex}{REGEX}{Regular Expression}
-% \newacronym{од}{OD}{Обхождане в дълбочина (Depth-first search)}
+\usepackage[acronym, toc]{glossaries}
+\makenoidxgloassaries
+\newacronym{dom}{DOM}{Document Object Model}
+\newacronym{srp}{SRP}{Single-responsibility principle}
+\newacronym{regex}{REGEX}{Regular Expression}
+\newacronym{од}{OD}{Обхождане в дълбочина (Depth-first search)}
 
 \usepackage{listings}
 \usepackage[scale=.85]{sourcecodepro}  % have code snippets
@@ -92,7 +92,7 @@
 \input{chapters/title_page}
 \includepdf[pages=-]{chapters/reviewer.pdf}
 % \input{chapters/blank_page}
-% \printnoidxglossary[type=\acronymtype, title={Използвани съкращения}, sort=def]
+\printnoidxglossary[type=\acronymtype, title={Използвани съкращения}, sort=def]
 % \addcontentsline{toc}{chapter}{Увод}
 \tableofcontents
 \input{chapters/00_Introduction}

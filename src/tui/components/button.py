@@ -28,7 +28,7 @@ class Button(Label):
         self._on_click: list[Callable[[], Awaitable[None]]] = []
 
     def on_click(self, *_args: Any, **_kwargs: Any):
-        """Pass arguments to the on_click decorator"""
+        """##DEPRICATED## Pass arguments to the on_click decorator"""
         def decorator_onclick(func: Callback) -> Callable[[], None]:
             """Subscribe a function with set parameters to the on_click event
             while making sure it's async"""
