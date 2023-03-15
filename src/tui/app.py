@@ -152,10 +152,10 @@ class App():
 
                 if perf_counter() - timer_start >= self.frequency:
                     self.__terminal.print(
-                            str(Compositor.compose(
+                            Compositor.compose(
                                     self.root,
                                     pre_composit=pre_composit_hook,
-                                    post_composit=post_composit_hook))
+                                    post_composit=post_composit_hook)
                         )
                     timer_start = perf_counter()
                     pre_composit_hook = []

@@ -7,6 +7,8 @@ from os import get_terminal_size, terminal_size, system, read
 from sys import stdin
 from typing import Optional, TextIO
 
+from tui.area import Area
+
 
 class Terminal:
     """Responsible for providing an interface to the terminal the program is
@@ -20,59 +22,50 @@ class Terminal:
         self.__mouse_input = False
         self.__input = False
 
-        self._prev_state: Optional[str] = None
+        self._prev_state: Optional[Area] = None
 
         self.enable_input()
         self.enable_mouse()
 
-    def print(self, string: str) -> None:
+    def print(self, area: Area) -> None:
         """Print a string to the terminal. Overwrites content in the terminal
         for higher response time and no stuttering."""
         # handle first print
         if self._prev_state is None:
-            print(string, end="", flush=True)
-            self._prev_state = string
+            print(str(area), end="", flush=True)
+            self._prev_state = area
+
             return
 
-        print(self._mutate_on_diff(self._prev_state, string),
+        print(self._mutate_on_diff(self._prev_state, area),
               end="",
               flush=True)
-        self._prev_state = string
+        self._prev_state = area
 
-    def _mutate_on_diff(self, str1: str, str2: str) -> str:
+    def _mutate_on_diff(self, area1: Area, area2: Area) -> str:
         """Find the difference between 2 strings and return a string which
         describes how the first one should change to become the second. Assume
         that both strings have the same dimensions. Expected strings are
         unnecessarily bloated for this sole reason (a lot of whitespaces can be
         followed by '\n') """
-        # TODO: use a string stream instead (optimization)
         mutate_str = ""
-        # -1 since it will be incremented for the first char and we want
-        # (0,0) to be top left
-        column = -1
-        row = 0
 
         # are the char differences consecutive
         streak = False
 
-        for count, char1 in enumerate(str1):
-            char2 = str2[count]
+        for line_count, line1 in enumerate(area1.char_area):
+            for char_count, char1 in enumerate(line1):
+                char2 = area2.char_area[line_count][char_count]
+                if char1 != char2:
+                    if streak is False:
+                        # move cursor
+                        mutate_str += self._move_cursor(row=line_count,
+                                                        column=char_count)
+                        streak = True
 
-            if char2 == '\n':
-                column = 0
-                row += 1
-            else:
-                column += 1
-
-            if char1 != char2:
-                if streak is False:
-                    # move cursor
-                    mutate_str += self._move_cursor(row=row, column=column)
-                    streak = True
-
-                mutate_str += char2
-            else:
-                streak = False
+                    mutate_str += char2
+                else:
+                    streak = False
 
         return mutate_str
 

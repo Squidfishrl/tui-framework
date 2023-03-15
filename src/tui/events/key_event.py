@@ -39,3 +39,7 @@ class HotkeyEvent(Event):
 
     def __eq__(self, __o: HotkeyEvent) -> bool:
         return self.keys == __o.keys and self.modifiers == __o.modifiers
+
+    def __hash__(self) -> int:
+        return (str(self.keys.__hash__()) +
+                str(self.modifiers.__hash__())).__hash__()
