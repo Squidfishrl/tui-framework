@@ -31,10 +31,13 @@ class App():
         # Instance of the terminal the app is being ran in
         try:
             self.__terminal: Terminal = Terminal()
-            rows = self.__terminal.rows
-            columns = self.__terminal.columns
+            if rows is None:
+                rows = self.__terminal.rows
+            if columns is None:
+                columns = self.__terminal.columns
         except OSError:
             pass
+
         self.event_queue: Queue[Event] = Queue()
         self.frequency = 1 / fps
 
@@ -42,39 +45,52 @@ class App():
         self._root = Division(style=f"rows={rows}, columns={columns}")
         self.root = self._root
 
-        def show_cursor(event: MouseEvent):
+        def mem_cursor_pos(event: MouseEvent):
+            """Helper function for show_cursor - memorizes cursor position"""
+            # Subtract 1 because rows and columns start at 1 but arrays do at
+            # at 0
+            mem_cursor_pos.coords = Coordinates(
+                    _row=event.coordinates.row - 1,
+                    _column=event.coordinates.column - 1)
+
+        def show_cursor(area: list[list[str]]):
             """Draw cursor and change its position every move event"""
-            area = show_cursor.area
 
             def draw_cursor() -> None:
-                row = event.coordinates.row
-                col = event.coordinates.column
-                area[row][col] = ("\x1b[30;47" + area[row][col])
+                row = mem_cursor_pos.coords.row
+                col = mem_cursor_pos.coords.column
+                show_cursor.prev_coords = mem_cursor_pos.coords
+                try:
+                    show_cursor.prev_value = area[row][col]
+                    area[row][col] = "\x1b[30;47h" + area[row][col]
+                except IndexError:
+                    return
 
             def undraw_cursor() -> None:
                 row = show_cursor.prev_coords.row
                 col = show_cursor.prev_coords.column
-                area[row][col] = show_cursor.prev_value
+                try:
+                    area[row][col] = show_cursor.prev_value
+                except IndexError:
+                    return
 
             try:
-                prev_value = (
-                        area[event.coordinates.row][event.coordinates.column]
-                    )
-            except IndexError:
-                return
+                undraw_cursor()
+            except AttributeError:
+                # prev value isn't set on first call
+                pass
 
-            draw_cursor()
-            undraw_cursor()
-            show_cursor.prev_value = prev_value
-            show_cursor.prev_coords = event.coordinates
+            try:
+                draw_cursor()
+            except AttributeError:
+                # mem_cursor_pos.coords isn't set before a event occurs
+                pass
 
-        show_cursor.prev_coords = Coordinates(0, 0)
-        show_cursor.prev_value = self._root.area.char_area[0][0]
-        show_cursor.area = self._root.area.char_area
+        self._show_cursor = show_cursor
         EventBroker.subscribe(
                 event=MouseEventTypes.MOUSE_MOVE,
                 subscriber=None,
-                post_composition=show_cursor
+                post_composition=mem_cursor_pos
         )
 
         def set_focus(event: MouseEvent) -> None:
@@ -151,12 +167,12 @@ class App():
                     )
 
                 if perf_counter() - timer_start >= self.frequency:
-                    self.__terminal.print(
-                            Compositor.compose(
+                    composited_area = Compositor.compose(
                                     self.root,
                                     pre_composit=pre_composit_hook,
                                     post_composit=post_composit_hook)
-                        )
+                    self._show_cursor(composited_area.char_area)
+                    self.__terminal.print(composited_area)
                     timer_start = perf_counter()
                     pre_composit_hook = []
                     post_composit_hook = []

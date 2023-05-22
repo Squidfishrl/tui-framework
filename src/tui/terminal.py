@@ -32,6 +32,7 @@ class Terminal:
         for higher response time and no stuttering."""
         # handle first print
         if self._prev_state is None:
+            print("\x1b[2J\x1b[H", end="")
             print(str(area), end="", flush=True)
             self._prev_state = area
 
@@ -58,9 +59,11 @@ class Terminal:
                 char2 = area2.char_area[line_count][char_count]
                 if char1 != char2:
                     if streak is False:
-                        # move cursor
-                        mutate_str += self._move_cursor(row=line_count,
-                                                        column=char_count)
+                        # move cursor - add +1 because enumeration starts at 0
+                        # and terminal emulators start counting rows and
+                        # columns from 1.
+                        mutate_str += self._move_cursor(row=line_count+1,
+                                                        column=char_count+1)
                         streak = True
 
                     mutate_str += char2

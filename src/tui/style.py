@@ -120,7 +120,12 @@ class Style:
                                     f"Invalid value {val} for attribute {attr}"
                                 )
                     case int():
-                        setattr(style_type, attr, int(val))
+                        try:
+                            setattr(style_type, attr, int(val))
+                        except ValueError:
+                            raise ValueError(
+                                    f"value {val} for attribute {attr} isn't an integer"
+                                )
                     case str():
                         setattr(style_type, attr, val)
                     case _:  # custom types are assumed to work with strings
