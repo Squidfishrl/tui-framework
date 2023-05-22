@@ -17,7 +17,7 @@ from tui.events.mouse_event import MouseEvent
 class EventBroker:
     """Responsible for managing event subscription and event callbacks"""
 
-    # a 'subscriber' with id ==  -1 is used to signify a global event
+    # a 'subscriber' with id == -1 is used to signify a global event
     __global_component = Division(identifier='-1')
 
     listeners: dict[Event, list[EventListener]] = {}
@@ -123,6 +123,11 @@ class EventBroker:
         """
 
         def handle_listener(listener: EventListener, event: Event) -> None:
+            # don't handle events when the subscriber isn't in focus
+            if (not listener.subscriber.has_focus()
+                    and listener.subscriber.id != '-1'):
+                return
+
             if listener.pre_composition is not None:
                 pre_composit_hook.append(
                         lambda: listener.pre_composition(event)

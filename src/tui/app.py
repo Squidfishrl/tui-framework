@@ -94,13 +94,14 @@ class App():
         )
 
         def set_focus(event: MouseEvent) -> None:
-            """Set focus to a component, once it's clicked"""
+            """Set focus to a component once it's clicked"""
             focus_component = self.root.find_component(event.coordinates)
-            if (focus_component is None or
-                    focus_component == set_focus.prev_component):
+            if focus_component is None:
                 return
 
-            set_focus.prev_component._focus = False
+            if set_focus.prev_component is not None:
+                set_focus.prev_component._focus = False
+
             focus_component._focus = True
             set_focus.prev_component = focus_component
 

@@ -59,14 +59,25 @@ class Component(CMNode):
         """Find the child-most component which encapsulates the coordinates we
         search by. A recursive depth search is performed on the component tree.
         """
-        # recursion exit condition
+        # recursion exit condition. It's checked before the for loop to
+        # eliminate unnecessary recursion when the mouse is outside the
+        # container
         if self._rect_mapping is None or coordinates not in self._rect_mapping:
             return None
 
+        # at this point we know that the coordinates are within this component
+        # so a children check is useless since the parent-most component always
+        # steal_focus priority
+        if self.get_style("steal_focus") is True:
+            return self
+
         for child in self.children:
             child_match = child.find_component(coordinates)
+
             if child_match is not None:
                 return child_match
+
+        return self
 
     @property
     def _rect_mapping(self) -> Optional[Rectangle]:

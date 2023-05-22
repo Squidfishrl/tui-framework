@@ -70,7 +70,7 @@ class Compositor:
                         prev_rect=prev_rect,
                         component=child
                     )
-                child._row_mapper = prev_rect
+                child._rect_mapping = prev_rect
             except CoordinateError as exc:
                 raise InsufficientAreaError(
                         "Component area isn't large enough"
