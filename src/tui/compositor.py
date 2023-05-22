@@ -87,9 +87,11 @@ class Compositor:
                 + new_area.model.with_padding.top_left.column
             )
 
+            initial_coordinates = Coordinates(_row=new_area.area_ptr.row+1, _column=new_area.area_ptr.column+1)
             # draw child component
             try:
-                new_area.add_chars(str(child_area), column_preserve=True)
+                new_area.add_chars(str(child_area), column_preserve=True, ptr_preserve=False)
+                child._rect_mapping = Rectangle(top_left=initial_coordinates, bottom_right=Coordinates(_row=new_area.area_ptr.row+1, _column=new_area.area_ptr.column+1))
             except IndexError as exc:
                 raise InsufficientAreaError(
                         "Component area isn't large enough"

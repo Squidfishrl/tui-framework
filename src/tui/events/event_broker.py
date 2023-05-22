@@ -150,14 +150,12 @@ class EventBroker:
 
         except KeyError:
             # Do nothing if event isn't listened to
-            return
+            pass
 
-        # handle listeners to all keys
-        try:
-            if not isinstance(event, HotkeyEvent):
-                return
-            for listener in EventBroker.listeners[HotkeyEvent(Keys.Any)]:
-                handle_listener(listener, event)
-        except KeyError:
-            # Do nothing if event isn't listened to
-            return
+        if isinstance(_event, HotkeyEvent):
+            try:
+                for listener in EventBroker.listeners[HotkeyEvent(Keys.Any)]:
+                    handle_listener(listener, _event)
+            except KeyError:
+                # Do nothing if event isn't listened to
+                pass
