@@ -38,7 +38,8 @@ class Input(Label):
             key = next(iter(event.keys))
 
             # If the key is backspace, try to remove one char
-            if key in ANSI_SEQUENCES_KEYS and ANSI_SEQUENCES_KEYS[key][0] == "backspace":
+            if (key in ANSI_SEQUENCES_KEYS
+                    and ANSI_SEQUENCES_KEYS[key][0] == "backspace"):
                 self.remove_last_char()
                 return
 

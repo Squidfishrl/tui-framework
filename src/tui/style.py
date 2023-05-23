@@ -124,7 +124,8 @@ class Style:
                             setattr(style_type, attr, int(val))
                         except ValueError:
                             raise ValueError(
-                                    f"value {val} for attribute {attr} isn't an integer"
+                                    f"value {val} for attribute {attr} isn't \
+                                        an integer"
                                 )
                     case str():
                         setattr(style_type, attr, val)

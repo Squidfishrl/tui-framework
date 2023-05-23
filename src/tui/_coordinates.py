@@ -40,6 +40,18 @@ class Coordinates:
         """Set column coordinate"""
         self._column = column
 
+    def __add__(self, other) -> Coordinates:
+        return Coordinates(
+                _row=self.row + other.row,
+                _column=self.column + other.column
+            )
+
+    def __sub__(self, other) -> Coordinates:
+        return Coordinates(
+                _row=self.row - other.row,
+                _column=self.column - other.column
+            )
+
 
 @dataclass(init=False)
 class RestrictedCoordinates(Coordinates):
